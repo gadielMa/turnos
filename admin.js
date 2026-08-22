@@ -13,6 +13,7 @@ let editingRuleIndex = null;
 let editingClientId = null;
 let pendingClientDeleteId = null;
 let emailClientId = null;
+let cashDateCalendar = null;
 const earlyHoursVisible = { appointments: false, schedule: false };
 const ARGENTINA_HOLIDAYS_2026 = {
   '2026-01-01': 'Año Nuevo', '2026-02-16': 'Carnaval', '2026-02-17': 'Carnaval',
@@ -246,8 +247,44 @@ async function loadPlatformBusinesses() {
 function businessServices() { return Array.isArray(currentBusiness?.public_profile?.services) ? currentBusiness.public_profile.services : []; }
 function serviceNamesForCurrentBusiness() { return Object.fromEntries(businessServices().map((service) => [service.id, service.name])); }
 function servicePricesForCurrentBusiness() { return Object.fromEntries(businessServices().map((service) => [service.id, Number(service.price) || 0])); }
+function populateCashServices() {
+  const select = document.getElementById('cashService');
+  const services = businessServices();
+  select.replaceChildren();
+  if (!services.length) {
+    const option = new Option('No hay servicios configurados', '');
+    option.disabled = true;
+    option.selected = true;
+    select.appendChild(option);
+    return;
+  }
+  services.forEach((service) => select.appendChild(new Option(`${service.name} — ${formatMoney(Number(service.price) || 0)}`, service.id)));
+}
 function bookingDurationMinutes() { return Number(currentBusiness?.public_profile?.slot_minutes) || 60; }
 function formatMoney(value) { return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value); }
+function formatAdminDate(value) { return new Intl.DateTimeFormat('es-AR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(parseDate(value)); }
+function setCashBookingDate(value) {
+  document.getElementById('cashDate').value = value;
+  document.getElementById('cashDateLabel').textContent = formatAdminDate(value);
+}
+function openCashDateCalendar() {
+  const today = dateOnly(new Date());
+  const selected = document.getElementById('cashDate').value || today;
+  cashDateCalendar?.destroy();
+  cashDateCalendar = new FullCalendar.Calendar(document.getElementById('cashDateCalendar'), {
+    initialView: 'dayGridMonth', initialDate: selected, locale: 'es', firstDay: 1, height: 'auto', fixedWeekCount: false,
+    validRange: { start: today }, selectable: true, selectMirror: true,
+    headerToolbar: { left: 'prev', center: 'title', right: 'next' },
+    buttonText: { today: 'Hoy' },
+    dayHeaderFormat: { weekday: 'narrow' },
+    select: (info) => setCashBookingDate(dateOnly(info.start)),
+    dateClick: (info) => setCashBookingDate(dateOnly(info.date)),
+  });
+  cashDateCalendar.render();
+  const value = selected < today ? today : selected;
+  setCashBookingDate(value);
+  cashDateCalendar.select(value);
+}
 function renderBusinessServices() {
   const container = document.getElementById('businessServices');
   if (!container) return;
@@ -352,6 +389,7 @@ async function loadBusinessDashboard(user, allowPlatformOwner = platformOwnerBus
   currentBusiness = business;
   document.getElementById('businessTitle').textContent = business.name;
   renderBusinessServices();
+  populateCashServices();
   businessDashboard.style.display = 'block';
   let { data: rules, error: rulesError } = await supabaseClient.from('availability_rules').select('*').eq('business_id', business.id).order('start_date');
   if (rulesError) throw rulesError;
@@ -631,15 +669,18 @@ document.getElementById('appointmentsEarlyHours').addEventListener('click', (eve
 document.getElementById('scheduleEarlyHours').addEventListener('click', (event) => toggleEarlyHours('schedule', scheduleCalendar, event.currentTarget));
 
 document.getElementById('cashBookingButton').addEventListener('click', () => {
+  populateCashServices();
   document.getElementById('cashDate').value = dateOnly(new Date());
   document.getElementById('cashTime').value = '14:00';
   document.getElementById('cashModal').classList.add('open');
+  openCashDateCalendar();
 });
 document.getElementById('cashCancel').addEventListener('click', () => document.getElementById('cashModal').classList.remove('open'));
 document.getElementById('cashForm').addEventListener('submit', async (event) => {
   event.preventDefault();
   const date = document.getElementById('cashDate').value;
   const cashDni = document.getElementById('cashDni').value.trim();
+  if (!date || date < dateOnly(new Date())) return showNotice('Revisá la fecha', [['Detalle', 'Elegí una fecha de hoy o posterior en el calendario.']]);
   if (!/^\d{7,8}$/.test(cashDni)) return showNotice('Revisá los datos', [['DNI', 'Debe tener 7 u 8 dígitos.']]);
   const { error } = await supabaseClient.from('bookings').insert({
     business_id: currentBusiness.id,

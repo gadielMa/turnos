@@ -227,16 +227,17 @@
 
     /* Modales: siempre contenidos dentro del viewport, incluso con zoom móvil. */
     .schedule-modal { padding: 16px; overscroll-behavior: contain; }
-    .schedule-dialog, .client-dialog { width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); box-sizing: border-box; padding: clamp(1.1rem, 4vw, 1.75rem); border: 1px solid #dce8e8; border-radius: 20px; box-shadow: 0 24px 70px rgba(7,27,57,.28); }
+    .schedule-dialog, .client-dialog { width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain; padding: clamp(1.1rem, 4vw, 1.75rem); border: 1px solid #dce8e8; border-radius: 20px; box-shadow: 0 24px 70px rgba(7,27,57,.28); }
     .schedule-dialog h2, .client-dialog h2 { color: #071b39; font-size: clamp(1.4rem, 5vw, 2rem); letter-spacing: -.045em; }
     .notice-body { display: grid; gap: .55rem; color: #53616b; font-size: 1rem; line-height: 1.45; }.notice-body strong { color: #173448; }
     .schedule-dialog .admin-form, .client-dialog .admin-form { gap: .8rem; }
     .schedule-dialog .admin-form input, .schedule-dialog .admin-form select, .schedule-dialog .admin-form textarea, .client-dialog .admin-form input, .client-dialog .admin-form select, .client-dialog .admin-form textarea { width: 100%; min-width: 0; max-width: 100%; padding: .78rem .9rem; border: 1px solid #cfdfdf; border-radius: 10px; color: #1e3342; font-family: inherit; font-size: .95rem; }
     .schedule-dialog .admin-form input:focus, .schedule-dialog .admin-form select:focus, .client-dialog .admin-form input:focus, .client-dialog .admin-form select:focus { outline: 3px solid rgba(18,109,115,.16); border-color: #126d73; }
+    .cash-date-picker { display: grid; gap: .45rem; padding: .9rem; border: 1px solid #d9e6e5; border-radius: 12px; background: #f8fbfa; }.cash-date-picker > span { color: #53616b; font-size: .8rem; font-weight: 700; }.cash-date-picker > strong { color: #173448; font-size: .9rem; text-transform: capitalize; }.cash-date-picker .fc { font-size: .73rem; }.cash-date-picker .fc .fc-toolbar { margin-bottom: .55rem; }.cash-date-picker .fc .fc-toolbar-title { font-size: .92rem; text-transform: capitalize; }.cash-date-picker .fc .fc-daygrid-day-frame { min-height: 32px; }.cash-date-picker .fc .fc-daygrid-day-number { padding: .35rem; }.cash-date-picker .fc .fc-highlight { background: rgba(18,109,115,.18); }.cash-date-picker .fc .fc-day-past { opacity: .35; }
     .schedule-actions { position: sticky; bottom: 0; margin: 1.1rem -1px -1px; padding-top: 1rem; background: linear-gradient(to bottom, rgba(255,255,255,0), #fff 22%); }
     .schedule-actions > span { display: flex; gap: .55rem; flex-wrap: wrap; justify-content: flex-end; }
     .schedule-actions button, .client-dialog-actions button { border-radius: 9px; }
-    @media (max-width: 720px) { .schedule-modal { align-items: flex-start; overflow-y: auto; }.schedule-dialog, .client-dialog { width: calc(100vw - 24px); max-height: calc(100dvh - 24px); margin: 12px auto; padding: 1.1rem; border-radius: 16px; }.schedule-dialog h2, .client-dialog h2 { margin-bottom: .9rem; }.schedule-grid { grid-template-columns: 1fr; gap: .65rem; }.schedule-actions { flex-direction: column; align-items: stretch; }.schedule-actions > span { justify-content: stretch; }.schedule-actions > span button, .schedule-actions > button { flex: 1; min-height: 42px; }.client-dialog-actions { flex-wrap: wrap; }.client-dialog-actions button { flex: 1; min-height: 42px; } }
+    @media (max-width: 720px) { .schedule-modal { align-items: flex-start; overflow-y: auto; }.schedule-dialog, .client-dialog { width: calc(100vw - 24px); max-height: calc(100dvh - 24px); margin: 12px auto; padding: 1.1rem; border-radius: 16px; }.schedule-dialog h2, .client-dialog h2 { margin-bottom: .9rem; }.schedule-grid { grid-template-columns: 1fr; gap: .65rem; }.schedule-actions { flex-direction: column; align-items: stretch; }.schedule-actions > span { justify-content: stretch; }.schedule-actions > span button, .schedule-actions > button { flex: 1; min-height: 42px; }.client-dialog-actions { position: sticky; bottom: -1.1rem; z-index: 1; flex-wrap: wrap; padding: .8rem 0 calc(.8rem + env(safe-area-inset-bottom)); background: linear-gradient(to bottom, rgba(255,253,249,0), #fffdf9 28%); }.client-dialog-actions button { flex: 1; min-height: 42px; } }
   </style>
 </head>
 <body>
@@ -367,8 +368,10 @@
         <label>Nombre del cliente<input id="cashName" required></label>
         <label>DNI<input id="cashDni" inputmode="numeric" pattern="[0-9]{7,8}" minlength="7" maxlength="8" required></label>
         <label>Estado del pago<select id="cashPaymentMethod" required><option value="cash">Pago en efectivo</option><option value="pending">Pendiente</option></select></label>
-        <label>Servicio<select id="cashService" required><option value="descontracturante">Masaje Descontracturante</option><option value="relajante">Masaje Relajante</option><option value="deportivo">Masaje Deportivo</option></select></label>
-        <div class="schedule-grid"><label>Fecha<input id="cashDate" type="date" required></label><label>Horario<input id="cashTime" type="time" step="900" required></label></div>
+        <label>Servicio<select id="cashService" required><option value="">Cargando servicios…</option></select></label>
+        <input id="cashDate" type="hidden" required>
+        <div class="cash-date-picker"><span>Fecha</span><strong id="cashDateLabel"></strong><div id="cashDateCalendar" aria-label="Elegí la fecha del turno"></div></div>
+        <label>Horario<input id="cashTime" type="time" step="900" required></label>
       </div>
       <div class="schedule-actions"><span></span><span><button id="cashCancel" class="schedule-cancel" type="button">Cancelar</button> <button class="schedule-save" type="submit">Guardar turno</button></span></div>
     </form>
