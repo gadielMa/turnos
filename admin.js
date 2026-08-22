@@ -207,6 +207,28 @@ function serviceNamesForCurrentBusiness() { return Object.fromEntries(businessSe
 function servicePricesForCurrentBusiness() { return Object.fromEntries(businessServices().map((service) => [service.id, Number(service.price) || 0])); }
 function bookingDurationMinutes() { return Number(currentBusiness?.public_profile?.slot_minutes) || 60; }
 function formatMoney(value) { return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value); }
+function renderBusinessServices() {
+  const container = document.getElementById('businessServices');
+  if (!container) return;
+  container.replaceChildren();
+  const services = businessServices();
+  if (!services.length) {
+    const empty = document.createElement('p');
+    empty.textContent = 'Todavía no hay servicios configurados.';
+    container.appendChild(empty);
+    return;
+  }
+  services.forEach((service) => {
+    const card = document.createElement('article');
+    card.className = 'service-summary-card';
+    const name = document.createElement('strong');
+    name.textContent = service.name;
+    const price = document.createElement('span');
+    price.textContent = formatMoney(Number(service.price) || 0);
+    card.append(name, price);
+    container.appendChild(card);
+  });
+}
 function ensureBillingMonths() {
   const select = document.getElementById('billingMonth');
   if (select.options.length) return;
@@ -215,7 +237,8 @@ function ensureBillingMonths() {
     const date = new Date(now.getFullYear(), now.getMonth() + offset, 1);
     const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     const option = document.createElement('option'); option.value = value;
-    option.textContent = new Intl.DateTimeFormat('es-AR', { month: 'long', year: 'numeric' }).format(date);
+    const label = new Intl.DateTimeFormat('es-AR', { month: 'long', year: 'numeric' }).format(date);
+    option.textContent = `${label.charAt(0).toUpperCase()}${label.slice(1)}`;
     select.appendChild(option);
   }
   select.value = dateOnly(now).slice(0, 7);
@@ -268,6 +291,7 @@ async function loadBusinessDashboard(user, allowPlatformOwner = platformOwnerBus
 
   currentBusiness = business;
   document.getElementById('businessTitle').textContent = business.name;
+  renderBusinessServices();
   businessDashboard.style.display = 'block';
   let { data: rules, error: rulesError } = await supabaseClient.from('availability_rules').select('*').eq('business_id', business.id).order('start_date');
   if (rulesError) throw rulesError;
