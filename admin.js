@@ -62,6 +62,18 @@ function eventDataForRange(start, end) {
 
 function refreshCalendar() { if (scheduleCalendar) scheduleCalendar.refetchEvents(); }
 
+function calendarToolbar() {
+  return window.matchMedia('(max-width: 720px)').matches
+    ? { left: 'prev,next', center: 'title', right: '' }
+    : { left: 'prev,next today', center: 'title', right: 'timeGridWeek,dayGridMonth' };
+}
+
+function calendarDensity() {
+  return window.matchMedia('(max-width: 720px)').matches
+    ? { dayHeaderFormat: { weekday: 'narrow', day: 'numeric' }, slotDuration: '00:30:00' }
+    : { dayHeaderFormat: { weekday: 'short', day: 'numeric', month: 'numeric' }, slotDuration: '00:15:00' };
+}
+
 async function loadAppointmentsCalendar() {
   const { data: bookings, error } = await supabaseClient
     .from('bookings')
@@ -86,8 +98,8 @@ async function loadAppointmentsCalendar() {
   appointmentsCalendar = new FullCalendar.Calendar(document.getElementById('appointmentsCalendar'), {
     initialView: 'timeGridWeek', initialDate: new Date(), locale: 'es', firstDay: 1, allDaySlot: false,
     buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día', list: 'Lista' },
-    slotMinTime: '06:00:00', slotMaxTime: '24:00:00', slotDuration: '00:15:00', slotLabelInterval: '01:00:00', height: 'auto',
-    headerToolbar: { left: 'prev,next today', center: 'title', right: 'timeGridWeek,dayGridMonth' }, events,
+    slotMinTime: '06:00:00', slotMaxTime: '24:00:00', slotLabelInterval: '01:00:00', height: 'auto',
+    headerToolbar: calendarToolbar(), events, ...calendarDensity(),
     eventClick: (info) => { const booking = info.event.extendedProps.booking; alert(`${booking.name}\n${serviceNames[booking.service] || booking.service}\n${booking.booking_date} ${booking.booking_time.slice(0, 5)}\nEstado: ${booking.status === 'confirmed' ? 'Confirmado' : booking.status}`); },
   });
   appointmentsCalendar.render();
@@ -250,8 +262,8 @@ async function loadBusinessDashboard(user, allowPlatformOwner = platformOwnerBus
   scheduleCalendar = new FullCalendar.Calendar(document.getElementById('hoursCalendar'), {
     initialView: 'timeGridWeek', initialDate: new Date(), locale: 'es', firstDay: 1, allDaySlot: false,
     buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día', list: 'Lista' },
-    slotMinTime: '06:00:00', slotMaxTime: '24:00:00', slotDuration: '00:15:00', snapDuration: '00:15:00', slotLabelInterval: '01:00:00', height: 'auto', editable: true, selectable: true,
-    headerToolbar: { left: 'prev,next today', center: 'title', right: 'timeGridWeek,dayGridMonth' },
+    slotMinTime: '06:00:00', slotMaxTime: '24:00:00', snapDuration: '00:15:00', slotLabelInterval: '01:00:00', height: 'auto', editable: true, selectable: true,
+    headerToolbar: calendarToolbar(), ...calendarDensity(),
     events: (info, success) => success(eventDataForRange(info.start, info.end)),
     dayCellClassNames: (info) => {
       const classes = [];
