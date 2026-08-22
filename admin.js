@@ -26,6 +26,20 @@ const ARGENTINA_HOLIDAYS_2026 = {
 function argentinaHoliday(date) { return ARGENTINA_HOLIDAYS_2026[dateOnly(date)] || null; }
 
 function showMessage(element, message, type) { element.textContent = message; element.className = `admin-message ${type}`; }
+function showNotice(title, details) {
+  document.getElementById('noticeTitle').textContent = title;
+  const body = document.getElementById('noticeBody');
+  body.replaceChildren();
+  details.forEach(([label, value]) => {
+    const line = document.createElement('p');
+    const strong = document.createElement('strong');
+    strong.textContent = `${label}: `;
+    line.append(strong, value);
+    body.appendChild(line);
+  });
+  document.getElementById('noticeModal').classList.add('open');
+}
+function closeNotice() { document.getElementById('noticeModal').classList.remove('open'); }
 function showView(authenticated) { loginView.style.display = authenticated ? 'none' : 'block'; dashboard.style.display = 'none'; businessDashboard.style.display = 'none'; document.getElementById('clientsPanel').classList.remove('active'); document.getElementById('billingPanel').classList.remove('active'); }
 function friendlyAdminUrl(route) {
   const match = window.location.pathname.match(/^(.*)\/(?:adminadmin|admin)(?:\/index\.html)?\/?$/);
@@ -100,7 +114,7 @@ async function loadAppointmentsCalendar() {
     buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día', list: 'Lista' },
     slotMinTime: '06:00:00', slotMaxTime: '24:00:00', slotLabelInterval: '01:00:00', height: 'auto',
     headerToolbar: calendarToolbar(), events, ...calendarDensity(),
-    eventClick: (info) => { const booking = info.event.extendedProps.booking; alert(`${booking.name}\n${serviceNames[booking.service] || booking.service}\n${booking.booking_date} ${booking.booking_time.slice(0, 5)}\nEstado: ${booking.status === 'confirmed' ? 'Confirmado' : booking.status}`); },
+    eventClick: (info) => { const booking = info.event.extendedProps.booking; showNotice('Detalle del turno', [['Cliente', booking.name], ['Servicio', serviceNames[booking.service] || booking.service], ['Fecha y hora', `${booking.booking_date} · ${booking.booking_time.slice(0, 5)}`], ['Estado', booking.status === 'confirmed' ? 'Confirmado' : booking.status]]); },
   });
   appointmentsCalendar.render();
 }
@@ -378,6 +392,7 @@ document.getElementById('scheduleTab').addEventListener('click', () => {
   document.getElementById('schedulePanel').classList.add('active'); document.getElementById('appointmentsPanel').classList.remove('active'); document.getElementById('clientsPanel').classList.remove('active'); document.getElementById('billingPanel').classList.remove('active');
   scheduleCalendar?.updateSize();
 });
+document.getElementById('newScheduleButton').addEventListener('click', () => openScheduleModal({ date: dateOnly(new Date()), start: '14:00', end: '15:00' }));
 document.getElementById('clientsTab').addEventListener('click', () => {
   document.getElementById('clientsTab').classList.add('active'); document.getElementById('appointmentsTab').classList.remove('active'); document.getElementById('scheduleTab').classList.remove('active'); document.getElementById('billingTab').classList.remove('active');
   document.getElementById('clientsPanel').classList.add('active'); document.getElementById('appointmentsPanel').classList.remove('active'); document.getElementById('schedulePanel').classList.remove('active'); document.getElementById('billingPanel').classList.remove('active');
@@ -514,7 +529,7 @@ document.getElementById('cashForm').addEventListener('submit', async (event) => 
   event.preventDefault();
   const date = document.getElementById('cashDate').value;
   const cashDni = document.getElementById('cashDni').value.trim();
-  if (!/^\d{7,8}$/.test(cashDni)) return alert('El DNI debe tener 7 u 8 dígitos.');
+  if (!/^\d{7,8}$/.test(cashDni)) return showNotice('Revisá los datos', [['DNI', 'Debe tener 7 u 8 dígitos.']]);
   const { error } = await supabaseClient.from('bookings').insert({
     business_id: currentBusiness.id,
     name: document.getElementById('cashName').value.trim(),
@@ -525,7 +540,7 @@ document.getElementById('cashForm').addEventListener('submit', async (event) => 
     status: 'confirmed',
     payment_method: document.getElementById('cashPaymentMethod').value,
   });
-  if (error) return alert(error.code === '23505' ? 'Ese horario ya está ocupado.' : error.message);
+  if (error) return showNotice('No se pudo guardar el turno', [['Detalle', error.code === '23505' ? 'Ese horario ya está ocupado.' : error.message]]);
   await supabaseClient.from('clients').upsert({ business_id: currentBusiness.id, name: document.getElementById('cashName').value.trim(), dni: cashDni }, { onConflict: 'business_id,dni' });
   document.getElementById('cashModal').classList.remove('open');
   document.getElementById('cashForm').reset();
@@ -533,13 +548,13 @@ document.getElementById('cashForm').addEventListener('submit', async (event) => 
 });
 
 document.getElementById('scheduleCancel').addEventListener('click', closeScheduleModal);
-document.getElementById('scheduleDelete').addEventListener('click', () => { if (editingRuleIndex !== null && confirm('¿Querés eliminar este horario?')) { scheduleRules.splice(editingRuleIndex, 1); closeScheduleModal(); refreshCalendar(); } });
+document.getElementById('scheduleDelete').addEventListener('click', () => { if (editingRuleIndex !== null && window.confirm('¿Querés eliminar este horario?')) { scheduleRules.splice(editingRuleIndex, 1); closeScheduleModal(); refreshCalendar(); } });
 document.getElementById('scheduleForm').addEventListener('submit', (event) => {
   event.preventDefault();
   const date = document.getElementById('scheduleDate').value;
   const frequency = document.getElementById('scheduleFrequency').value;
   const rule = { ...(editingRuleIndex === null ? {} : scheduleRules[editingRuleIndex]), business_id: currentBusiness.id, title: 'Disponible', start_date: date, start_time: `${document.getElementById('scheduleStart').value}:00`, end_time: `${document.getElementById('scheduleEnd').value}:00`, frequency, interval_count: Number(document.getElementById('scheduleInterval').value) || 1, occurrences: Number(document.getElementById('scheduleOccurrences').value) || null, until_date: document.getElementById('scheduleUntil').value || null, weekdays: frequency === 'weekly' ? [parseDate(date).getDay()] : [], active: true };
-  if (rule.start_time >= rule.end_time) return alert('La hora de inicio debe ser anterior a la hora de fin.');
+  if (rule.start_time >= rule.end_time) return showNotice('Revisá el horario', [['Detalle', 'La hora de inicio debe ser anterior a la hora de fin.']]);
   if (editingRuleIndex === null) scheduleRules.push(rule); else scheduleRules[editingRuleIndex] = rule;
   closeScheduleModal(); refreshCalendar();
 });
@@ -573,5 +588,7 @@ document.querySelectorAll('.dark-mode-toggle').forEach((button) => button.addEve
   localStorage.setItem('adminDarkMode', String(enabled));
   applyDarkMode(enabled);
 }));
+document.getElementById('noticeClose').addEventListener('click', closeNotice);
+document.getElementById('noticeModal').addEventListener('click', (event) => { if (event.target.id === 'noticeModal') closeNotice(); });
 
 refreshSession();

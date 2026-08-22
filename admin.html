@@ -83,7 +83,8 @@
     .legend-paid { background: #8fc49d; }
     .legend-cash { background: #e3a29b; }
     .legend-pending { background: #e8ce86; }
-    .clients-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .table-scroll { width: 100%; overflow-x: auto; overscroll-behavior-x: contain; border: 1px solid #e2eaea; border-radius: 12px; margin-top: 1rem; }
+    .clients-table { width: 100%; border-collapse: collapse; margin: 0; }
     .clients-table th, .clients-table td { padding: .75rem; text-align: left; border-bottom: 1px solid #eee; }
     .clients-table th { color: #684054; }
     .client-form { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: .7rem; align-items: end; margin-top: 1rem; }
@@ -101,28 +102,32 @@
     .client-whatsapp-link { background: #d0e9d7; color: #34704b; }
     .client-email-button { background: #f5d5d1; color: #a34f49; }
     .client-action { border: 0; border-radius: 6px; padding: .4rem .6rem; cursor: pointer; font: inherit; font-size: .85rem; }
-    .client-edit { background: #d0e9d7; color: #4f805f; }
-    .client-delete { background: #b8d8c1; color: #365447; }
+    .client-edit { background: #dcebf7; color: #356582; }
+    .client-delete { background: #fde5e3; color: #a54848; }
     #appointmentsPanel #cashBookingButton { background: #e4b1c0 !important; color: #6e4251 !important; }
     #schedulePanel #hoursForm button { background: #a9d4dc; color: #426b75; }
     .billing-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin: 1rem 0; }
     .billing-card { background: #fff1c2; border-radius: 12px; padding: 1rem; }
     .billing-card small { display: block; color: #8b6b22; }
     .billing-card strong { display: block; margin-top: .35rem; color: #80601b; font-size: 1.35rem; }
-    .billing-table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; }
+    .billing-table { width: 100%; border-collapse: collapse; margin: 0; }
     .billing-table th, .billing-table td { padding: .65rem; text-align: left; border-bottom: 1px solid #e5edef; }
     .billing-table th { color: #527985; }
     @media (max-width: 700px) { .billing-summary { grid-template-columns: 1fr; } }
     .admin-footer { width: min(1120px, 90%); min-height: 0; margin: 0 auto; padding: 32px 0; display: grid; justify-items: center; gap: 14px; border-top: 1px solid #dce5e3; color: #526575; font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif; font-size: .9rem; text-align: center; }
     .admin-footer p { margin: 0; }
+    .admin-footer p b { color: #071b39; font-weight: 700; }
     .admin-footer-links { display: flex; justify-content: center; align-items: center; gap: 18px; flex-wrap: wrap; }
     .admin-footer a { display: inline-flex; align-items: center; gap: 7px; color: inherit; text-decoration: none; }
     .admin-footer img { width: 20px; height: 20px; object-fit: contain; }
-    body.dark-mode .admin-page { background: #1e2930; }
-    body.dark-mode { background: #1e2930; }
+    body.dark-mode { background: #101a20; color: #e8eef0; }
+    body.dark-mode .global-header { background: #13242c; border-color: #334d58; }
+    body.dark-mode .global-brand, body.dark-mode .global-menu a { color: #eff8f9; }
+    body.dark-mode .global-menu a:hover { color: #8bd6d3; }
+    body.dark-mode .admin-page { background: #101a20; }
     body.dark-mode .business-welcome { background: #3b4449; }
     body.dark-mode .business-welcome h1, body.dark-mode .business-welcome p { color: #f0f5f6; }
-    body.dark-mode .admin-card, body.dark-mode .schedule-dialog, body.dark-mode .client-dialog { background: #293840; color: #e8eef0; }
+    body.dark-mode .admin-card, body.dark-mode .schedule-dialog, body.dark-mode .client-dialog, body.dark-mode .panel-section { background: #1b2a32; color: #e8eef0; }
     body.dark-mode .admin-card h1, body.dark-mode .schedule-dialog h2, body.dark-mode .client-dialog h2 { color: #f0f5f6; }
     body.dark-mode .business-list { border-color: #526873; }
     body.dark-mode .business-list h2, body.dark-mode .business-item strong { color: #f0f5f6; }
@@ -136,14 +141,15 @@
     body.dark-mode .panel-tab.tab-turnos.active { background: #4c3944; }
     body.dark-mode .panel-tab.tab-horarios.active { background: #294750; }
     body.dark-mode .panel-tab.tab-clientes.active { background: #30483a; }
-    body.dark-mode .clients-table th, body.dark-mode .clients-table td { border-color: #526873; color: #e8eef0; }
-    body.dark-mode .client-edit { background: #365447; color: #c9e6d1; }
-    body.dark-mode .client-delete { background: #47705a; color: #e4f4e8; }
+    body.dark-mode .table-scroll, body.dark-mode .clients-table, body.dark-mode .billing-table, body.dark-mode #appointmentsCalendar, body.dark-mode #hoursCalendar { background: #1b2a32; border-color: #405965; }
+    body.dark-mode .clients-table th, body.dark-mode .clients-table td { border-color: #405965; color: #e8eef0; }
+    body.dark-mode .client-edit { background: #254b62; color: #c6e6f5; }
+    body.dark-mode .client-delete { background: #62363a; color: #ffd2cf; }
     body.dark-mode .client-email-button { background: #684044; color: #f2c3bd; }
     body.dark-mode .client-whatsapp-link { background: #365447; color: #c9e6d1; }
     body.dark-mode .billing-card { background: #5a4a25; }
     body.dark-mode .billing-card small, body.dark-mode .billing-card strong, body.dark-mode .billing-table th, body.dark-mode .billing-table td { color: #f4df9b; }
-    body.dark-mode .billing-table th, body.dark-mode .billing-table td { border-color: #526873; }
+    body.dark-mode .billing-table th, body.dark-mode .billing-table td { border-color: #405965; color: #e8eef0; }
     body.dark-mode .admin-footer { background: #1e2930; color: #9eb1b7; }
     body.dark-mode .calendar-legend { color: #c2d0d4; }
     body.dark-mode .fc { color: #e8eef0; }
@@ -167,9 +173,9 @@
     #appointmentsPanel .early-hours-toggle { border-color: #e4b1c0; background: rgba(228, 177, 192, .18); color: #a56f86; }
     #schedulePanel .fc .fc-button-primary.fc-button-active { background: #72a9b8 !important; border-color: #72a9b8 !important; color: #fff !important; }
     #schedulePanel .fc .fc-button { background: #a9d4dc; border-color: #a9d4dc; color: #426b75; }
-    @media (max-width: 700px) { .client-form { grid-template-columns: 1fr; } .clients-table { font-size: .9rem; } }
+    @media (max-width: 700px) { .client-form { grid-template-columns: 1fr; } .clients-table { min-width: 640px; font-size: .9rem; } .billing-table { min-width: 480px; } }
     .early-hours-toggle { border: 1px solid #c4d8dc; background: transparent; color: #7799a1; border-radius: 8px; padding: .45rem .7rem; cursor: pointer; font: inherit; font-size: .9rem; margin: .7rem 0; }
-    body.dark-mode #appointmentsPanel .early-hours-toggle { border-color: #c9859c; background: rgba(201, 133, 156, .2); color: #e7b8c8; }
+    body.dark-mode #appointmentsPanel .early-hours-toggle, body.dark-mode .early-hours-toggle { border-color: #526873; background: #263940; color: #b9cdd1; }
     .schedule-modal { position: fixed; inset: 0; z-index: 20; display: none; align-items: center; justify-content: center; padding: 1rem; background: rgba(35,25,31,.45); }
     .schedule-modal.open { display: flex; }
     .schedule-dialog { width: min(560px, 100%); max-height: calc(100vh - 2rem); overflow-y: auto; background: white; border-radius: 16px; padding: 1.75rem; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
@@ -180,7 +186,7 @@
     .schedule-save { background: #a9cfbb !important; color: #365447 !important; }
     .schedule-cancel { background: #eee !important; color: #333 !important; }
     .schedule-delete { background: #fdecec !important; color: #a52b2b !important; text-decoration: none !important; }
-    @media (max-width: 600px) { .schedule-dialog { padding: 1.25rem; } .schedule-grid { grid-template-columns: 1fr; } .schedule-actions { align-items: stretch; flex-direction: column; } .schedule-actions > span { display: flex; justify-content: flex-end; gap: .4rem; } .global-header-inner { width: calc(100% - 32px); height: 60px; gap: 7px; overflow: hidden; } .global-brand { flex-shrink: 0; font-size: .86rem; gap: 8px; white-space: nowrap; } .global-brand img { width: 32px; height: 32px; } .global-menu { flex: 1; justify-content: flex-end; gap: 8px; white-space: nowrap; } .global-menu a { flex-shrink: 0; font-size: .62rem; } .admin-footer { width: calc(100% - 32px); padding: 26px 0; font-size: .82rem; } .admin-footer-links { gap: 10px 14px; } }
+    @media (max-width: 720px) { .schedule-dialog { padding: 1.25rem; } .schedule-grid { grid-template-columns: 1fr; } .schedule-actions { align-items: stretch; flex-direction: column; } .schedule-actions > span { display: flex; justify-content: flex-end; gap: .4rem; } .global-header { overflow-x: auto; scrollbar-width: none; } .global-header::-webkit-scrollbar { display: none; } .global-header-inner { width: max-content; min-width: calc(100% - 32px); height: 60px; padding: 0 16px; gap: 14px; justify-content: flex-start; } .global-brand { flex-shrink: 0; font-size: .86rem; gap: 8px; white-space: nowrap; } .global-brand img { width: 32px; height: 32px; } .global-menu { flex: 0 0 auto; gap: 14px; white-space: nowrap; } .global-menu a { flex-shrink: 0; font-size: .72rem; } .admin-footer { width: calc(100% - 32px); padding: 26px 0; font-size: .82rem; } .admin-footer-links { gap: 10px 14px; } }
 
     /* Panel visual: capa de producto, sin alterar la lógica de reservas. */
     body { background: #f4f7f8; color: #243446; font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif; }
@@ -207,12 +213,12 @@
     .calendar-legend { gap: .6rem; margin: 1.2rem 0 .9rem; }
     .legend-item { padding: .42rem .72rem; border-radius: 999px; background: #f2f6f6; color: #53666d; font-size: .8rem; font-weight: 700; }
     .legend-dot { width: .65rem; height: .65rem; }
-    .early-hours-toggle { border: 1px solid #b8d6d6; border-radius: 9px; background: #f4fbfa; color: #126d73; font-weight: 700; }
+    .early-hours-toggle { border: 1px solid #cfd9dc; border-radius: 8px; background: #f4f7f7; color: #667980; padding: .38rem .62rem; font-size: .78rem; font-weight: 600; }
     #appointmentsCalendar, #hoursCalendar { margin-top: 1rem; padding: 1rem; border: 1px solid #e2ebeb; border-radius: 15px; background: #fff; }
     .fc .fc-toolbar { gap: .7rem; }.fc .fc-toolbar-title { color: #132b3c; font-size: 1.15rem; font-weight: 700; letter-spacing: -.03em; }.fc .fc-button { border: 0; border-radius: 8px; padding: .58rem .75rem; background: #e9f2f2 !important; color: #345761 !important; font-weight: 700; box-shadow: none; }.fc .fc-button:hover, .fc .fc-button:focus, .fc .fc-button-primary.fc-button-active { background: #126d73 !important; color: #fff !important; }.fc .fc-scrollgrid { border-color: #e1e8e9; }.fc th { padding: .55rem 0; background: #f5f9f9; color: #58717a; font-size: .78rem; text-transform: uppercase; }.fc td { border-color: #e8eeee; }.fc .fc-timegrid-slot { height: 2.8em; }.fc-event { border: 0; border-radius: 7px; padding: 3px 5px; box-shadow: 0 3px 8px rgba(37,48,70,.13); }
-    .clients-table, .billing-table { overflow: hidden; border: 1px solid #e2eaea; border-radius: 12px; background: #fff; }.clients-table th, .billing-table th { padding: .85rem; background: #f3f8f8; color: #527078; font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; }.clients-table td, .billing-table td { padding: .9rem .85rem; border-bottom-color: #edf1f1; }.client-form { padding: 1rem; border-radius: 14px; background: #f4f8f8; }.client-form input, .admin-form input, .admin-form textarea, .admin-form select, #billingMonth { border-color: #d5e1e1; border-radius: 9px; background: #fff; }.billing-card { position: relative; overflow: hidden; padding: 1.25rem; border: 1px solid #e0ebea; border-radius: 15px; background: linear-gradient(135deg, #f4fbfa, #e6f2f0); }.billing-card::after { content: ''; position: absolute; right: -16px; bottom: -22px; width: 82px; height: 82px; border-radius: 50%; background: rgba(18,109,115,.10); }.billing-card small { color: #527078; font-weight: 700; }.billing-card strong { position: relative; z-index: 1; color: #0b5861; font-size: 1.7rem; }
+    .clients-table th, .billing-table th { padding: .85rem; background: #f3f8f8; color: #527078; font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; }.clients-table td, .billing-table td { padding: .9rem .85rem; border-bottom-color: #edf1f1; }.client-form { padding: 1rem; border-radius: 14px; background: #f4f8f8; min-width: 0; }.client-form input, .admin-form input, .admin-form textarea, .admin-form select, #billingMonth { box-sizing: border-box; border-color: #d5e1e1; border-radius: 9px; background: #fff; }.client-form input { width: 100%; }.billing-panel-select { display: inline-flex; align-items: center; gap: .55rem; color: #173448; font-weight: 700; }.billing-panel-select #billingMonth { min-height: 42px; padding: .55rem .8rem; border: 1px solid #d5e1e1; color: #173448; font: inherit; font-weight: 600; box-shadow: 0 2px 7px rgba(18,109,115,.06); }.billing-card { position: relative; overflow: hidden; padding: 1.25rem; border: 1px solid #e0ebea; border-radius: 15px; background: linear-gradient(135deg, #f4fbfa, #e6f2f0); }.billing-card::after { content: ''; position: absolute; right: -16px; bottom: -22px; width: 82px; height: 82px; border-radius: 50%; background: rgba(18,109,115,.10); }.billing-card small { color: #527078; font-weight: 700; }.billing-card strong { position: relative; z-index: 1; color: #0b5861; font-size: 1.7rem; }
     body.dark-mode .business-welcome { background: linear-gradient(112deg, #071b39, #102c38); }.admin-footer { background: transparent; }
-    @media (max-width: 720px) { .business-welcome { min-height: 145px; padding: 1.7rem 1.25rem 3.2rem; align-items: flex-start; }.business-welcome h1 { font-size: 1.9rem; }.business-welcome > div:last-child { position: absolute; top: 87px; right: 1.25rem; }.panel-tabs { width: calc(100% - 1.5rem); grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: -2.1rem; }.panel-tab { min-height: 44px; font-size: .76rem; }.panel-section.active, .platform-panel.active { padding: 1rem; }.calendar-legend { display: grid; grid-template-columns: 1fr; }.fc .fc-toolbar { flex-wrap: wrap; }.fc .fc-toolbar-title { order: -1; width: 100%; text-align: center; }.client-form { padding: .8rem; } }
+    @media (max-width: 720px) { .business-welcome { min-height: 0; padding: 1.5rem 1.25rem; align-items: flex-start; }.business-welcome h1 { font-size: clamp(1.55rem, 7vw, 1.9rem); line-height: 1.08; }.business-welcome > div:last-child { position: static; margin-top: 1rem; }.panel-tabs { width: calc(100% - 1.5rem); grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0; }.panel-tab { min-height: 44px; font-size: .76rem; }.panel-section.active, .platform-panel.active { box-sizing: border-box; min-width: 0; padding: 1rem; }.calendar-legend { display: grid; grid-template-columns: 1fr; }.fc .fc-toolbar { flex-wrap: wrap; }.fc .fc-toolbar-title { order: -1; width: 100%; text-align: center; }.client-form { padding: .8rem; } }
 
     @media (max-width: 720px) { #appointmentsCalendar, #hoursCalendar { padding: .55rem; overflow: hidden; }.fc { font-size: .7rem; }.fc .fc-toolbar { display: grid; grid-template-columns: 1fr; gap: .45rem; align-items: center; }.fc .fc-toolbar-title { order: 0; font-size: 1rem; }.fc .fc-toolbar-chunk { display: flex; justify-content: center; }.fc .fc-toolbar-chunk:last-child { display: none; }.fc .fc-button { padding: .45rem .6rem; font-size: .72rem; }.fc .fc-col-header-cell-cushion { display: grid; gap: 1px; padding: .42rem 0; font-size: .66rem; line-height: 1.15; white-space: nowrap; }.fc th { padding: 0; }.fc .fc-timegrid-axis { width: 27px !important; min-width: 27px !important; }.fc .fc-timegrid-slot { height: 1.7em; }.fc .fc-timegrid-slot-label { font-size: .62rem; }.fc .fc-event { padding: 1px 2px; font-size: .58rem; line-height: 1.15; }.fc .fc-scrollgrid-section-header > * { min-width: 0; }.fc .fc-col-header { table-layout: fixed; }.fc .fc-day-sat, .fc .fc-day-sun { background: rgba(18,109,115,.04); } }
 
@@ -220,6 +226,7 @@
     .schedule-modal { padding: 16px; overscroll-behavior: contain; }
     .schedule-dialog, .client-dialog { width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); box-sizing: border-box; padding: clamp(1.1rem, 4vw, 1.75rem); border: 1px solid #dce8e8; border-radius: 20px; box-shadow: 0 24px 70px rgba(7,27,57,.28); }
     .schedule-dialog h2, .client-dialog h2 { color: #071b39; font-size: clamp(1.4rem, 5vw, 2rem); letter-spacing: -.045em; }
+    .notice-body { display: grid; gap: .55rem; color: #53616b; font-size: 1rem; line-height: 1.45; }.notice-body strong { color: #173448; }
     .schedule-dialog .admin-form, .client-dialog .admin-form { gap: .8rem; }
     .schedule-dialog .admin-form input, .schedule-dialog .admin-form select, .schedule-dialog .admin-form textarea, .client-dialog .admin-form input, .client-dialog .admin-form select, .client-dialog .admin-form textarea { width: 100%; min-width: 0; max-width: 100%; padding: .78rem .9rem; border: 1px solid #cfdfdf; border-radius: 10px; color: #1e3342; font-family: inherit; font-size: .95rem; }
     .schedule-dialog .admin-form input:focus, .schedule-dialog .admin-form select:focus, .client-dialog .admin-form input:focus, .client-dialog .admin-form select:focus { outline: 3px solid rgba(18,109,115,.16); border-color: #126d73; }
@@ -298,6 +305,7 @@
       </section>
       <section id="schedulePanel" class="panel-section">
         <div class="calendar-help">Seleccioná un rango para crear un horario. Arrastrá el bloque o sus bordes para cambiarlo. Hacé clic sobre un bloque para editarlo.</div>
+        <button id="newScheduleButton" class="schedule-save" type="button">+ Crear horario</button>
         <button id="scheduleEarlyHours" class="early-hours-toggle" type="button">Mostrar 00:00–06:00</button>
         <div id="hoursCalendar"></div>
         <form id="hoursForm" class="admin-form"><button type="submit">Guardar horarios</button></form>
@@ -314,19 +322,19 @@
           <button type="submit">Agregar cliente</button>
         </form>
         <div id="clientsMessage" class="admin-message"></div>
-        <table class="clients-table"><thead><tr><th>Nombre</th><th>DNI</th><th>Contacto</th><th>Acciones</th></tr></thead><tbody id="clientsList"></tbody></table>
+        <div class="table-scroll" tabindex="0" aria-label="Tabla de clientes desplazable horizontalmente"><table class="clients-table"><thead><tr><th>Nombre</th><th>DNI</th><th>Contacto</th><th>Acciones</th></tr></thead><tbody id="clientsList"></tbody></table></div>
       </section>
       <section id="billingPanel" class="panel-section">
         <h2>Facturación</h2>
         <p>Resumen de turnos cobrados durante el mes seleccionado.</p>
-        <label>Mes <select id="billingMonth"></select></label>
+        <label class="billing-panel-select">Mes <select id="billingMonth"></select></label>
         <div class="billing-summary"><div class="billing-card"><small>Total facturado</small><strong id="billingTotal">$0</strong></div><div class="billing-card"><small>Turnos cobrados</small><strong id="billingCount">0</strong></div><div class="billing-card"><small>Ticket promedio</small><strong id="billingAverage">$0</strong></div></div>
-        <h3>Por tipo de masaje</h3><table class="billing-table"><thead><tr><th>Servicio</th><th>Turnos</th><th>Total</th></tr></thead><tbody id="billingServices"></tbody></table>
-        <h3>Por cliente</h3><table class="billing-table"><thead><tr><th>Cliente</th><th>Turnos</th><th>Total</th></tr></thead><tbody id="billingClients"></tbody></table>
+        <h3>Por tipo de masaje</h3><div class="table-scroll"><table class="billing-table"><thead><tr><th>Servicio</th><th>Turnos</th><th>Total</th></tr></thead><tbody id="billingServices"></tbody></table></div>
+        <h3>Por cliente</h3><div class="table-scroll"><table class="billing-table"><thead><tr><th>Cliente</th><th>Turnos</th><th>Total</th></tr></thead><tbody id="billingClients"></tbody></table></div>
       </section>
     </section>
   </main>
-  <footer class="admin-footer"><p>© 2026 Induliru. Innovación | Calidad | Desarrollo. Todos los derechos reservados.</p><div class="admin-footer-links"><a href="https://wa.me/5491172657749" target="_blank" rel="noopener"><img src="https://induliru.com/WSP_LOGO.png" alt="">WhatsApp: +54 9 11 7265-7749</a><a href="https://www.instagram.com/induliru.tech/" target="_blank" rel="noopener"><img src="https://induliru.com/INSTA_LOGO.png" alt="">Instagram: @induliru.tech</a><a href="mailto:hola@induliru.com"><img src="https://induliru.com/GMAIL_LOGO.png" alt="">Email: hola@induliru.com</a></div></footer>
+  <footer class="admin-footer"><p>© 2026 <b>Induliru</b>. Innovación | Calidad | Desarrollo. Todos los derechos reservados.</p><div class="admin-footer-links"><a href="https://wa.me/5491172657749" target="_blank" rel="noopener"><img src="https://induliru.com/WSP_LOGO.png" alt="">WhatsApp: +54 9 11 7265-7749</a><a href="https://www.instagram.com/induliru.tech/" target="_blank" rel="noopener"><img src="https://induliru.com/INSTA_LOGO.png" alt="">Instagram: @induliru.tech</a><a href="mailto:hola@induliru.com"><img src="https://induliru.com/GMAIL_LOGO.png" alt="">Email: hola@induliru.com</a></div></footer>
   <div id="scheduleModal" class="schedule-modal" role="dialog" aria-modal="true">
     <form id="scheduleForm" class="schedule-dialog">
       <h2 id="scheduleModalTitle">Nuevo horario</h2>
@@ -379,6 +387,9 @@
       <div id="clientEmailStatus" class="admin-message"></div>
       <div class="client-dialog-actions"><button id="clientEmailCancel" class="client-secondary" type="button">Cancelar</button><button class="client-primary" type="submit">Enviar email</button></div>
     </form>
+  </div>
+  <div id="noticeModal" class="schedule-modal" role="dialog" aria-modal="true" aria-labelledby="noticeTitle">
+    <div class="client-dialog notice-dialog"><h2 id="noticeTitle">Detalle del turno</h2><div id="noticeBody" class="notice-body"></div><div class="client-dialog-actions"><button id="noticeClose" class="client-primary" type="button">Entendido</button></div></div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
