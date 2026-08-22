@@ -26,7 +26,12 @@ Deno.serve(async (req) => {
       : [];
     const selectedService = services.find((item) => item.id === service && Number.isFinite(Number(item.price)));
     if (!selectedService) return json({ error: "El servicio seleccionado no está disponible" }, 400);
-    const price = Number(selectedService.price);
+    const configuredTestAmount = business.slug === "brian"
+      ? Number(Deno.env.get("BRIAN_TEST_CHECKOUT_AMOUNT") || 0)
+      : 0;
+    // During Brian's controlled launch, keep the complete Mercado Pago + webhook
+    // flow intact while charging the configured symbolic amount.
+    const price = configuredTestAmount > 0 ? configuredTestAmount : Number(selectedService.price);
     if (!(await isValidSlot(supabase, date, time, business.id))) {
       return json({ error: "Ese horario no está disponible para reservas" }, 400);
     }
