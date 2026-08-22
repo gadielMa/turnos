@@ -108,11 +108,11 @@
     .billing-table th, .billing-table td { padding: .65rem; text-align: left; border-bottom: 1px solid #e5edef; }
     .billing-table th { color: #527985; }
     @media (max-width: 700px) { .billing-summary { grid-template-columns: 1fr; } }
-    .admin-footer { min-height: 0; text-align: center; color: #82939a; font-size: .85rem; line-height: 1.6; padding: .75rem 0 1rem; }
-    .admin-footer a { color: inherit; text-decoration: none; margin: 0 .35rem; }
-    .admin-footer .fa-whatsapp { color: #25D366; }
-    .admin-footer .fa-instagram { color: #E4405F; }
-    .admin-footer .fa-envelope { color: #EA4335; }
+    .admin-footer { width: min(1120px, 90%); min-height: 0; margin: 0 auto; padding: 32px 0; display: grid; justify-items: center; gap: 14px; border-top: 1px solid #dce5e3; color: #526575; font-family: Arial, Helvetica, sans-serif; font-size: .9rem; text-align: center; }
+    .admin-footer p { margin: 0; }
+    .admin-footer-links { display: flex; justify-content: center; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .admin-footer a { display: inline-flex; align-items: center; gap: 7px; color: inherit; text-decoration: none; }
+    .admin-footer img { width: 20px; height: 20px; object-fit: contain; }
     body.dark-mode .admin-page { background: #1e2930; }
     body.dark-mode { background: #1e2930; }
     body.dark-mode .business-welcome { background: #3b4449; }
@@ -175,7 +175,7 @@
     .schedule-save { background: #a9cfbb !important; color: #365447 !important; }
     .schedule-cancel { background: #eee !important; color: #333 !important; }
     .schedule-delete { background: #fdecec !important; color: #a52b2b !important; text-decoration: none !important; }
-    @media (max-width: 600px) { .schedule-dialog { padding: 1.25rem; } .schedule-grid { grid-template-columns: 1fr; } .schedule-actions { align-items: stretch; flex-direction: column; } .schedule-actions > span { display: flex; justify-content: flex-end; gap: .4rem; } .global-header-inner { width: calc(100% - 32px); height: 60px; } .global-brand { font-size: .86rem; gap: 8px; } .global-brand img { width: 32px; height: 32px; } .global-menu { gap: 11px; } .global-menu a { font-size: .7rem; } }
+    @media (max-width: 600px) { .schedule-dialog { padding: 1.25rem; } .schedule-grid { grid-template-columns: 1fr; } .schedule-actions { align-items: stretch; flex-direction: column; } .schedule-actions > span { display: flex; justify-content: flex-end; gap: .4rem; } .global-header-inner { width: calc(100% - 32px); height: 60px; } .global-brand { font-size: .86rem; gap: 8px; } .global-brand img { width: 32px; height: 32px; } .global-menu { gap: 11px; } .global-menu a { font-size: .7rem; } .admin-footer { width: calc(100% - 32px); padding: 26px 0; font-size: .82rem; } .admin-footer-links { gap: 10px 14px; } }
   </style>
 </head>
 <body>
@@ -275,7 +275,7 @@
       </section>
     </section>
   </main>
-  <footer class="admin-footer">© 2025 Hecho por <strong>Induliru.tech</strong>. Todos los derechos reservados.<br><a href="https://wa.me/5491172657749" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> WhatsApp: +54 9 11 7265-7749</a> · <a href="https://www.instagram.com/induliru.tech/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i> Instagram: @induliru.tech</a> · <a href="mailto:hola@induliru.com"><i class="fas fa-envelope"></i> Email: hola@induliru.com</a></footer>
+  <footer class="admin-footer"><p>© 2026 Induliru. Innovación | Calidad | Desarrollo. Todos los derechos reservados.</p><div class="admin-footer-links"><a href="https://wa.me/5491172657749" target="_blank" rel="noopener"><img src="https://induliru.com/WSP_LOGO.png" alt="">WhatsApp: +54 9 11 7265-7749</a><a href="https://www.instagram.com/induliru.tech/" target="_blank" rel="noopener"><img src="https://induliru.com/INSTA_LOGO.png" alt="">Instagram: @induliru.tech</a><a href="mailto:hola@induliru.com"><img src="https://induliru.com/GMAIL_LOGO.png" alt="">Email: hola@induliru.com</a></div></footer>
   <div id="scheduleModal" class="schedule-modal" role="dialog" aria-modal="true">
     <form id="scheduleForm" class="schedule-dialog">
       <h2 id="scheduleModalTitle">Nuevo horario</h2>
