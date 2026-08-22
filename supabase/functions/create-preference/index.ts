@@ -58,11 +58,18 @@ Deno.serve(async (req) => {
       throw bookingError;
     }
 
+    // El cliente pasa a formar parte de la agenda desde que inicia la reserva,
+    // incluso si el checkout falla o decide volver a pagar más tarde.
+    await supabase.from("clients").upsert({
+      business_id: business.id,
+      name: String(name).trim(),
+      dni: String(dni),
+    }, { onConflict: "business_id,dni" });
+
     // Brian uses a production $1 payment link during the controlled launch.
     // A fixed Mercado Pago link cannot carry the booking reference, so this
     // reservation remains pending until the payment is reviewed in the panel.
     if (directPaymentLink && !useCheckoutPro) {
-      await supabase.from("clients").upsert({ business_id: business.id, name: String(name).trim(), dni: String(dni) }, { onConflict: "business_id,dni" });
       return json({ booking, preference_id: null, init_point: directPaymentLink, payment_mode: "manual_confirmation" }, 201);
     }
 
@@ -105,14 +112,13 @@ Deno.serve(async (req) => {
     const preference = await preferenceResponse.json();
     if (!preferenceResponse.ok) {
       console.error("Mercado Pago preference error", preference);
+      await supabase.from("bookings").update({ status: "cancelled" }).eq("id", booking.id).eq("status", "pending");
       return json({ error: "No se pudo crear la preferencia de pago" }, 502);
     }
 
     await supabase.from("bookings")
       .update({ payment_id: preference.id })
       .eq("id", booking.id);
-    await supabase.from("clients").upsert({ business_id: business.id, name: String(name).trim(), dni: String(dni) }, { onConflict: "business_id,dni" });
-
     return json({
       booking,
       preference_id: preference.id,
