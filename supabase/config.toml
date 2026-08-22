@@ -3,6 +3,9 @@ project_id = "jbrjsvkdnyzptkxnflbe"
 [functions.availability]
 verify_jwt = false
 
+[functions.public-business]
+verify_jwt = false
+
 [functions.create-booking]
 verify_jwt = false
 
