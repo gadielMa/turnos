@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
     line-height: 1.6;
     color: #333;
     overflow-x: hidden;
@@ -529,7 +529,7 @@ body {
 
 /* Personalizar Flatpickr */
 .flatpickr-calendar {
-    font-family: 'Poppins', sans-serif !important;
+    font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif !important;
     border-radius: 15px !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
     border: none !important;
@@ -999,7 +999,7 @@ body {
     box-shadow: 0 6px 20px rgba(32, 201, 151, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     min-height: 60px;
@@ -1208,7 +1208,7 @@ body {
     position: relative;
     overflow: hidden;
     min-width: 220px;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }

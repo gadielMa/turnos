@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="https://induliru.com/LOGO.png">
   <link rel="apple-touch-icon" href="https://induliru.com/LOGO.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -113,7 +113,7 @@
     .billing-table th, .billing-table td { padding: .65rem; text-align: left; border-bottom: 1px solid #e5edef; }
     .billing-table th { color: #527985; }
     @media (max-width: 700px) { .billing-summary { grid-template-columns: 1fr; } }
-    .admin-footer { width: min(1120px, 90%); min-height: 0; margin: 0 auto; padding: 32px 0; display: grid; justify-items: center; gap: 14px; border-top: 1px solid #dce5e3; color: #526575; font-family: Arial, Helvetica, sans-serif; font-size: .9rem; text-align: center; }
+    .admin-footer { width: min(1120px, 90%); min-height: 0; margin: 0 auto; padding: 32px 0; display: grid; justify-items: center; gap: 14px; border-top: 1px solid #dce5e3; color: #526575; font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif; font-size: .9rem; text-align: center; }
     .admin-footer p { margin: 0; }
     .admin-footer-links { display: flex; justify-content: center; align-items: center; gap: 18px; flex-wrap: wrap; }
     .admin-footer a { display: inline-flex; align-items: center; gap: 7px; color: inherit; text-decoration: none; }
@@ -181,6 +181,38 @@
     .schedule-cancel { background: #eee !important; color: #333 !important; }
     .schedule-delete { background: #fdecec !important; color: #a52b2b !important; text-decoration: none !important; }
     @media (max-width: 600px) { .schedule-dialog { padding: 1.25rem; } .schedule-grid { grid-template-columns: 1fr; } .schedule-actions { align-items: stretch; flex-direction: column; } .schedule-actions > span { display: flex; justify-content: flex-end; gap: .4rem; } .global-header-inner { width: calc(100% - 32px); height: 60px; } .global-brand { font-size: .86rem; gap: 8px; } .global-brand img { width: 32px; height: 32px; } .global-menu { gap: 11px; } .global-menu a { font-size: .7rem; } .admin-footer { width: calc(100% - 32px); padding: 26px 0; font-size: .82rem; } .admin-footer-links { gap: 10px 14px; } }
+
+    /* Panel visual: capa de producto, sin alterar la lógica de reservas. */
+    body { background: #f4f7f8; color: #243446; font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif; }
+    .admin-page { padding-bottom: 3.5rem; background: radial-gradient(circle at 15% 0%, #e5f1ef 0, transparent 31%), #f4f7f8; }
+    .business-welcome { display: flex; align-items: center; min-height: 174px; margin: 0 0 1.4rem; padding: 2.3rem max(1.5rem, calc((100vw - 1100px) / 2)); color: #f7fbfb; background: linear-gradient(112deg, #071b39 0%, #113b55 57%, #126d73 120%); box-shadow: inset 0 -1px 0 rgba(255,255,255,.15); }
+    .business-welcome h1 { color: #fff; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -.055em; }
+    .business-welcome p { margin-top: .45rem; color: #c5dbe0; font-size: 1rem; }
+    .dark-mode-toggle, .logout { border-color: rgba(206, 234, 235, .55); color: #efffff; background: rgba(255,255,255,.08); transition: transform .18s ease, background .18s ease, border-color .18s ease; }
+    .dark-mode-toggle:hover, .logout:hover { transform: translateY(-2px); background: rgba(255,255,255,.16); border-color: #fff; }
+    .panel-tabs { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin-top: -2.55rem; margin-bottom: 1.35rem; padding: 8px; border: 1px solid #dbe5e6; border-radius: 18px; background: rgba(255,255,255,.94); box-shadow: 0 14px 32px rgba(7,27,57,.11); }
+    #dashboard .panel-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .panel-tab { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 48px; border: 0; border-radius: 11px; color: #61737c; font-size: .83rem; font-weight: 700; transition: background .18s ease, color .18s ease, transform .18s ease, box-shadow .18s ease; }
+    .panel-tab:hover { transform: translateY(-1px); color: #071b39; background: #edf5f4; }
+    .panel-tab::before { font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: .85rem; }
+    .tab-turnos::before { content: '\f073'; }.tab-horarios::before { content: '\f133'; }.tab-clientes::before { content: '\f0c0'; }.tab-facturacion::before { content: '\f201'; }
+    .panel-tab.tab-turnos.active, .panel-tab.tab-horarios.active, .panel-tab.tab-clientes.active, .panel-tab.tab-facturacion.active { border-bottom: 0; color: #fff; background: linear-gradient(135deg, #0c6370, #126d73); box-shadow: 0 8px 18px rgba(18,109,115,.24); }
+    .panel-section.active, .platform-panel.active { padding: clamp(1.2rem, 3vw, 2rem); border: 1px solid #e0e8e8; border-radius: 20px; background: rgba(255,255,255,.94); box-shadow: 0 12px 32px rgba(20,47,59,.07); }
+    .platform-panel.active { max-width: 1100px; }
+    .panel-section h2, .platform-panel h2 { color: #071b39; font-size: 1.35rem; letter-spacing: -.035em; }
+    .panel-section > p, .platform-panel > p { color: #6d7f87; }
+    #appointmentsPanel #cashBookingButton, .client-form button, .admin-form button, #schedulePanel #hoursForm button { border: 0 !important; border-radius: 10px !important; background: linear-gradient(135deg, #126d73, #0b5861) !important; color: #fff !important; box-shadow: 0 7px 15px rgba(18,109,115,.18); transition: transform .18s ease, box-shadow .18s ease; }
+    #appointmentsPanel #cashBookingButton:hover, .client-form button:hover, .admin-form button:hover, #schedulePanel #hoursForm button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(18,109,115,.25); }
+    #appointmentsPanel #cashBookingButton { padding: .9rem 1.15rem !important; }
+    .calendar-legend { gap: .6rem; margin: 1.2rem 0 .9rem; }
+    .legend-item { padding: .42rem .72rem; border-radius: 999px; background: #f2f6f6; color: #53666d; font-size: .8rem; font-weight: 700; }
+    .legend-dot { width: .65rem; height: .65rem; }
+    .early-hours-toggle { border: 1px solid #b8d6d6; border-radius: 9px; background: #f4fbfa; color: #126d73; font-weight: 700; }
+    #appointmentsCalendar, #hoursCalendar { margin-top: 1rem; padding: 1rem; border: 1px solid #e2ebeb; border-radius: 15px; background: #fff; }
+    .fc .fc-toolbar { gap: .7rem; }.fc .fc-toolbar-title { color: #132b3c; font-size: 1.15rem; font-weight: 700; letter-spacing: -.03em; }.fc .fc-button { border: 0; border-radius: 8px; padding: .58rem .75rem; background: #e9f2f2 !important; color: #345761 !important; font-weight: 700; box-shadow: none; }.fc .fc-button:hover, .fc .fc-button:focus, .fc .fc-button-primary.fc-button-active { background: #126d73 !important; color: #fff !important; }.fc .fc-scrollgrid { border-color: #e1e8e9; }.fc th { padding: .55rem 0; background: #f5f9f9; color: #58717a; font-size: .78rem; text-transform: uppercase; }.fc td { border-color: #e8eeee; }.fc .fc-timegrid-slot { height: 2.8em; }.fc-event { border: 0; border-radius: 7px; padding: 3px 5px; box-shadow: 0 3px 8px rgba(37,48,70,.13); }
+    .clients-table, .billing-table { overflow: hidden; border: 1px solid #e2eaea; border-radius: 12px; background: #fff; }.clients-table th, .billing-table th { padding: .85rem; background: #f3f8f8; color: #527078; font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; }.clients-table td, .billing-table td { padding: .9rem .85rem; border-bottom-color: #edf1f1; }.client-form { padding: 1rem; border-radius: 14px; background: #f4f8f8; }.client-form input, .admin-form input, .admin-form textarea, .admin-form select, #billingMonth { border-color: #d5e1e1; border-radius: 9px; background: #fff; }.billing-card { position: relative; overflow: hidden; padding: 1.25rem; border: 1px solid #e0ebea; border-radius: 15px; background: linear-gradient(135deg, #f4fbfa, #e6f2f0); }.billing-card::after { content: ''; position: absolute; right: -16px; bottom: -22px; width: 82px; height: 82px; border-radius: 50%; background: rgba(18,109,115,.10); }.billing-card small { color: #527078; font-weight: 700; }.billing-card strong { position: relative; z-index: 1; color: #0b5861; font-size: 1.7rem; }
+    body.dark-mode .business-welcome { background: linear-gradient(112deg, #071b39, #102c38); }.admin-footer { background: transparent; }
+    @media (max-width: 720px) { .business-welcome { min-height: 145px; padding: 1.7rem 1.25rem 3.2rem; align-items: flex-start; }.business-welcome h1 { font-size: 1.9rem; }.business-welcome > div:last-child { position: absolute; top: 87px; right: 1.25rem; }.panel-tabs { width: calc(100% - 1.5rem); grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: -2.1rem; }.panel-tab { min-height: 44px; font-size: .76rem; }.panel-section.active, .platform-panel.active { padding: 1rem; }.calendar-legend { display: grid; grid-template-columns: 1fr; }.fc .fc-toolbar { flex-wrap: wrap; }.fc .fc-toolbar-title { order: -1; width: 100%; text-align: center; }.client-form { padding: .8rem; } }
   </style>
 </head>
 <body>
