@@ -26,10 +26,12 @@ const ARGENTINA_HOLIDAYS_2026 = {
 function argentinaHoliday(date) { return ARGENTINA_HOLIDAYS_2026[dateOnly(date)] || null; }
 
 function showMessage(element, message, type) { element.textContent = message; element.className = `admin-message ${type}`; }
-function showNotice(title, details) {
+function showNotice(title, details, actions = []) {
   document.getElementById('noticeTitle').textContent = title;
   const body = document.getElementById('noticeBody');
+  const actionArea = document.getElementById('noticeActions');
   body.replaceChildren();
+  actionArea.replaceChildren();
   details.forEach(([label, value]) => {
     const line = document.createElement('p');
     const strong = document.createElement('strong');
@@ -37,6 +39,21 @@ function showNotice(title, details) {
     line.append(strong, value);
     body.appendChild(line);
   });
+  actions.forEach(({ label, className = 'client-primary', onClick }) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = className;
+    button.textContent = label;
+    button.addEventListener('click', onClick);
+    actionArea.appendChild(button);
+  });
+  const closeButton = document.createElement('button');
+  closeButton.id = 'noticeClose';
+  closeButton.className = actions.length ? 'client-secondary' : 'client-primary';
+  closeButton.type = 'button';
+  closeButton.textContent = actions.length ? 'Cerrar' : 'Entendido';
+  closeButton.addEventListener('click', closeNotice);
+  actionArea.appendChild(closeButton);
   document.getElementById('noticeModal').classList.add('open');
 }
 function closeNotice() { document.getElementById('noticeModal').classList.remove('open'); }
@@ -114,7 +131,28 @@ async function loadAppointmentsCalendar() {
     buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día', list: 'Lista' },
     slotMinTime: '06:00:00', slotMaxTime: '24:00:00', slotLabelInterval: '01:00:00', height: 'auto',
     headerToolbar: calendarToolbar(), events, ...calendarDensity(),
-    eventClick: (info) => { const booking = info.event.extendedProps.booking; showNotice('Detalle del turno', [['Cliente', booking.name], ['Servicio', serviceNames[booking.service] || booking.service], ['Fecha y hora', `${booking.booking_date} · ${booking.booking_time.slice(0, 5)}`], ['Estado', booking.status === 'confirmed' ? 'Confirmado' : booking.status]]); },
+    eventClick: (info) => {
+      const booking = info.event.extendedProps.booking;
+      const details = [['Cliente', booking.name], ['Servicio', serviceNames[booking.service] || booking.service], ['Fecha y hora', `${booking.booking_date} · ${booking.booking_time.slice(0, 5)}`], ['Estado', booking.status === 'confirmed' ? 'Confirmado' : 'Pendiente de confirmación']];
+      const actions = booking.status === 'pending' ? [{
+        label: 'Confirmar pago de Mercado Pago',
+        onClick: async (event) => {
+          const button = event.currentTarget;
+          button.disabled = true;
+          button.textContent = 'Confirmando…';
+          const { error: updateError } = await supabaseClient.from('bookings').update({ status: 'confirmed', payment_method: 'mercadopago' }).eq('id', booking.id).eq('business_id', currentBusiness.id).eq('status', 'pending');
+          if (updateError) {
+            button.disabled = false;
+            button.textContent = 'Confirmar pago de Mercado Pago';
+            return showNotice('No se pudo confirmar', [['Detalle', updateError.message]]);
+          }
+          closeNotice();
+          await loadAppointmentsCalendar();
+          if (document.getElementById('billingPanel').classList.contains('active')) await loadBilling();
+        },
+      }] : [];
+      showNotice('Detalle del turno', details, actions);
+    },
   });
   appointmentsCalendar.render();
 }
@@ -658,7 +696,6 @@ document.querySelectorAll('.dark-mode-toggle').forEach((button) => button.addEve
   localStorage.setItem('adminDarkMode', String(enabled));
   applyDarkMode(enabled);
 }));
-document.getElementById('noticeClose').addEventListener('click', closeNotice);
 document.getElementById('noticeModal').addEventListener('click', (event) => { if (event.target.id === 'noticeModal') closeNotice(); });
 
 refreshSession();
