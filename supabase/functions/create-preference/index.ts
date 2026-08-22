@@ -78,9 +78,9 @@ Deno.serve(async (req) => {
     const bookingUrl = `${siteUrl.replace(/\/$/, "")}${turnsPath}/${business.slug}`;
     const backUrls = turnsPath
       ? {
-        success: `${bookingUrl}?payment_status=approved&source=mercadopago`,
-        failure: `${bookingUrl}?payment_status=failure&source=mercadopago`,
-        pending: `${bookingUrl}?payment_status=pending&source=mercadopago`,
+        success: `${bookingUrl}?payment_status=approved&source=mercadopago&booking_date=${date}&booking_time=${time}`,
+        failure: `${bookingUrl}?payment_status=failure&source=mercadopago&booking_date=${date}&booking_time=${time}`,
+        pending: `${bookingUrl}?payment_status=pending&source=mercadopago&booking_date=${date}&booking_time=${time}`,
       }
       : {
         success: `${siteUrl}/exito.html?payment_status=approved&source=mercadopago`,
