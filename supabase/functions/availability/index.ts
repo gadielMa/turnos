@@ -29,6 +29,7 @@ Deno.serve(async (req) => {
 
     if (error) throw error;
     if (month) {
+      const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Argentina/Buenos_Aires" });
       const occupiedByDate = new Map<string, Set<string>>();
       (data ?? []).forEach((row) => {
         const day = (row as { booking_date: string }).booking_date;
@@ -39,6 +40,7 @@ Deno.serve(async (req) => {
       const daysInMonth = new Date(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0).getDate();
       const availableDates = (await Promise.all(Array.from({ length: daysInMonth }, async (_, index) => {
         const day = `${month}-${String(index + 1).padStart(2, "0")}`;
+        if (day < today) return null;
         const occupied = occupiedByDate.get(day) || new Set<string>();
         const available = (await slotsForDate(supabase, day, business.id)).filter((slot) => !occupied.has(slot));
         return available.length ? day : null;
