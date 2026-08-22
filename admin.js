@@ -106,6 +106,9 @@ function calendarDensity() {
 }
 
 async function loadAppointmentsCalendar() {
+  // Al actualizar un pago conservamos exactamente la semana y vista elegidas.
+  const preservedDate = appointmentsCalendar?.getDate();
+  const preservedView = appointmentsCalendar?.view.type;
   const { data: bookings, error } = await supabaseClient
     .from('bookings')
     .select('id, name, service, booking_date, booking_time, status, payment_method')
@@ -127,7 +130,7 @@ async function loadAppointmentsCalendar() {
 
   appointmentsCalendar?.destroy();
   appointmentsCalendar = new FullCalendar.Calendar(document.getElementById('appointmentsCalendar'), {
-    initialView: 'timeGridWeek', initialDate: new Date(), locale: 'es', firstDay: 1, allDaySlot: false,
+    initialView: preservedView || 'timeGridWeek', initialDate: preservedDate || new Date(), locale: 'es', firstDay: 1, allDaySlot: false,
     buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día', list: 'Lista' },
     slotMinTime: '06:00:00', slotMaxTime: '24:00:00', slotLabelInterval: '01:00:00', height: 'auto',
     headerToolbar: calendarToolbar(), events, ...calendarDensity(),
