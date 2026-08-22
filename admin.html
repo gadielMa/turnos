@@ -9,6 +9,13 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css">
   <style>
     .admin-page { min-height: auto; padding: 0 0 1rem; background: #fbf8f3; }
+    .global-header { background: #f5f8f7; border-bottom: 1px solid #dce5e3; }
+    .global-header-inner { width: min(1120px, 90%); height: 78px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .global-brand { display: flex; align-items: center; gap: 12px; color: #071b39; text-decoration: none; font-family: Arial, Helvetica, sans-serif; font-size: 1.1rem; font-weight: bold; letter-spacing: 2px; }
+    .global-brand img { width: 45px; height: 45px; object-fit: contain; }
+    .global-menu { display: flex; align-items: center; gap: 30px; }
+    .global-menu a { color: #071b39; text-decoration: none; font-family: Arial, Helvetica, sans-serif; font-size: .95rem; font-weight: bold; }
+    .global-menu a:hover { color: #126d73; }
     .admin-card { max-width: 680px; margin: 0 auto; background: #fffdf9; padding: 2rem; border-radius: 18px; box-shadow: 0 10px 35px rgba(111,139,151,.12); }
     #businessDashboard { width: 100%; max-width: none; margin: 0; padding: 0 0 2rem; border-radius: 0; box-shadow: none; }
     #dashboard { width: 100%; max-width: none; margin: 0; padding: 0 0 2rem; border-radius: 0; box-shadow: none; }
@@ -168,10 +175,21 @@
     .schedule-save { background: #a9cfbb !important; color: #365447 !important; }
     .schedule-cancel { background: #eee !important; color: #333 !important; }
     .schedule-delete { background: #fdecec !important; color: #a52b2b !important; text-decoration: none !important; }
-    @media (max-width: 600px) { .schedule-dialog { padding: 1.25rem; } .schedule-grid { grid-template-columns: 1fr; } .schedule-actions { align-items: stretch; flex-direction: column; } .schedule-actions > span { display: flex; justify-content: flex-end; gap: .4rem; } }
+    @media (max-width: 600px) { .schedule-dialog { padding: 1.25rem; } .schedule-grid { grid-template-columns: 1fr; } .schedule-actions { align-items: stretch; flex-direction: column; } .schedule-actions > span { display: flex; justify-content: flex-end; gap: .4rem; } .global-header-inner { width: calc(100% - 32px); height: 68px; } .global-brand { font-size: .9rem; gap: 8px; } .global-brand img { width: 36px; height: 36px; } .global-menu { gap: 13px; } .global-menu a { font-size: .72rem; } }
   </style>
 </head>
 <body>
+  <header class="global-header">
+    <div class="global-header-inner">
+      <a href="https://induliru.com/" class="global-brand"><img src="LOGO.png" alt="Logo de Induliru">INDULIRU</a>
+      <nav class="global-menu" aria-label="Navegación principal">
+        <a href="https://induliru.com/#nosotros">Nosotros</a>
+        <a href="https://induliru.com/#servicios">Servicios</a>
+        <a href="https://induliru.com/turnos/">Turnos</a>
+        <a href="https://induliru.com/#contacto">Contacto</a>
+      </nav>
+    </div>
+  </header>
   <main class="admin-page">
     <section id="loginView" class="admin-card">
       <h1>Panel de administración</h1>
