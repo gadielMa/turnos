@@ -225,9 +225,28 @@ function renderBusinessServices() {
     name.textContent = service.name;
     const price = document.createElement('span');
     price.textContent = formatMoney(Number(service.price) || 0);
-    card.append(name, price);
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.dataset.serviceId = service.id;
+    remove.textContent = 'Eliminar servicio';
+    card.append(name, price, remove);
     container.appendChild(card);
   });
+}
+function serviceIdFromName(name) {
+  return name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+async function saveBusinessServices(services) {
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const response = await fetch(supabaseFunctionUrl('update-business-services'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: SUPABASE_CONFIG.ANON_KEY, Authorization: `Bearer ${sessionData.session?.access_token || ''}` },
+    body: JSON.stringify({ business_id: currentBusiness.id, services }),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || 'No se pudieron guardar los servicios');
+  currentBusiness.public_profile = { ...(currentBusiness.public_profile || {}), services };
+  renderBusinessServices();
 }
 function ensureBillingMonths() {
   const select = document.getElementById('billingMonth');
@@ -417,6 +436,29 @@ document.getElementById('scheduleTab').addEventListener('click', () => {
   scheduleCalendar?.updateSize();
 });
 document.getElementById('newScheduleButton').addEventListener('click', () => openScheduleModal({ date: dateOnly(new Date()), start: '14:00', end: '15:00' }));
+document.getElementById('serviceForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const message = document.getElementById('servicesMessage');
+  const name = document.getElementById('serviceName').value.trim();
+  const id = serviceIdFromName(name);
+  const price = Number(document.getElementById('servicePrice').value);
+  const description = document.getElementById('serviceDescription').value.trim();
+  if (!id || !Number.isFinite(price) || price <= 0) return showMessage(message, 'Completá un nombre y un precio válido.', 'error');
+  const services = businessServices();
+  if (services.some((service) => service.id === id)) return showMessage(message, 'Ya existe un servicio con ese nombre.', 'error');
+  try {
+    await saveBusinessServices([...services, { id, name, price, description }]);
+    event.target.reset();
+    showMessage(message, 'Servicio agregado correctamente.', 'success');
+  } catch (error) { showMessage(message, error.message, 'error'); }
+});
+document.getElementById('businessServices').addEventListener('click', async (event) => {
+  const button = event.target.closest('button[data-service-id]');
+  if (!button) return;
+  const services = businessServices().filter((service) => service.id !== button.dataset.serviceId);
+  try { await saveBusinessServices(services); showMessage(document.getElementById('servicesMessage'), 'Servicio eliminado.', 'success'); }
+  catch (error) { showMessage(document.getElementById('servicesMessage'), error.message, 'error'); }
+});
 document.getElementById('clientsTab').addEventListener('click', () => {
   document.getElementById('clientsTab').classList.add('active'); document.getElementById('appointmentsTab').classList.remove('active'); document.getElementById('scheduleTab').classList.remove('active'); document.getElementById('billingTab').classList.remove('active');
   document.getElementById('clientsPanel').classList.add('active'); document.getElementById('appointmentsPanel').classList.remove('active'); document.getElementById('schedulePanel').classList.remove('active'); document.getElementById('billingPanel').classList.remove('active');

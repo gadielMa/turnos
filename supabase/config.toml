@@ -12,6 +12,9 @@ verify_jwt = false
 [functions.create-preference]
 verify_jwt = false
 
+[functions.update-business-services]
+verify_jwt = false
+
 [functions.appointment]
 verify_jwt = false
 
