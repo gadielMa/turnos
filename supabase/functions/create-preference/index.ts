@@ -36,8 +36,9 @@ Deno.serve(async (req) => {
       return json({ error: "Ese horario no está disponible para reservas" }, 400);
     }
 
+    const directPaymentLink = business.slug === "brian" ? Deno.env.get("BRIAN_DIRECT_PAYMENT_LINK") : null;
     const accessToken = Deno.env.get("MERCADOPAGO_ACCESS_TOKEN");
-    if (!accessToken) return json({ error: "Falta MERCADOPAGO_ACCESS_TOKEN" }, 500);
+    if (!directPaymentLink && !accessToken) return json({ error: "Falta configurar un medio de pago" }, 500);
 
     await supabase.rpc("cleanup_expired_bookings");
 
@@ -54,6 +55,14 @@ Deno.serve(async (req) => {
     if (bookingError) {
       if (bookingError.code === "23505") return json({ error: "Ese horario acaba de ser reservado" }, 409);
       throw bookingError;
+    }
+
+    // Brian uses a production $1 payment link during the controlled launch.
+    // A fixed Mercado Pago link cannot carry the booking reference, so this
+    // reservation remains pending until the payment is reviewed in the panel.
+    if (directPaymentLink) {
+      await supabase.from("clients").upsert({ business_id: business.id, name: String(name).trim(), dni: String(dni) }, { onConflict: "business_id,dni" });
+      return json({ booking, preference_id: null, init_point: directPaymentLink, payment_mode: "manual_confirmation" }, 201);
     }
 
     const siteUrl = Deno.env.get("PUBLIC_SITE_URL") || "https://gadielma.github.io/masajes.antomorselli";
