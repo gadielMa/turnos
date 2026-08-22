@@ -330,6 +330,10 @@ async function loadBusinessDashboard(user, allowPlatformOwner = platformOwnerBus
     },
     selectAllow: (info) => !argentinaHoliday(info.start) && info.start.getDay() !== 0,
     select: (info) => openScheduleModal({ date: dateOnly(info.start), start: info.startStr.slice(11, 16), end: info.endStr.slice(11, 16) }),
+    dateClick: (info) => {
+      if (argentinaHoliday(info.date) || info.date.getDay() === 0) return;
+      openScheduleModal({ date: dateOnly(info.date), start: info.dateStr.slice(11, 16) || '14:00', end: new Date(info.date.getTime() + 30 * 60000).toTimeString().slice(0, 5) });
+    },
     eventClick: (info) => openScheduleModal({ ruleIndex: info.event.extendedProps.ruleIndex, date: dateOnly(info.event.start), start: info.event.start.toTimeString(), end: info.event.end.toTimeString() }),
     eventChange: (info) => {
       const index = info.event.extendedProps.ruleIndex;
