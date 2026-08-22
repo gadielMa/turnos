@@ -37,6 +37,7 @@ Deno.serve(async (req) => {
     }
 
     const directPaymentLink = business.slug === "brian" ? Deno.env.get("BRIAN_DIRECT_PAYMENT_LINK") : null;
+    const useCheckoutPro = business.slug === "brian" && Deno.env.get("BRIAN_USE_CHECKOUT_PRO") === "true";
     const accessToken = Deno.env.get("MERCADOPAGO_ACCESS_TOKEN");
     if (!directPaymentLink && !accessToken) return json({ error: "Falta configurar un medio de pago" }, 500);
 
@@ -60,7 +61,7 @@ Deno.serve(async (req) => {
     // Brian uses a production $1 payment link during the controlled launch.
     // A fixed Mercado Pago link cannot carry the booking reference, so this
     // reservation remains pending until the payment is reviewed in the panel.
-    if (directPaymentLink) {
+    if (directPaymentLink && !useCheckoutPro) {
       await supabase.from("clients").upsert({ business_id: business.id, name: String(name).trim(), dni: String(dni) }, { onConflict: "business_id,dni" });
       return json({ booking, preference_id: null, init_point: directPaymentLink, payment_mode: "manual_confirmation" }, 201);
     }
