@@ -78,11 +78,17 @@ Deno.serve(async (req) => {
     const siteUrl = Deno.env.get("PUBLIC_SITE_URL") || "https://gadielma.github.io/masajes.antomorselli";
     const turnsPath = Deno.env.get("PUBLIC_TURNS_PATH") || "";
     const bookingUrl = `${siteUrl.replace(/\/$/, "")}${turnsPath}/${business.slug}`;
+    const returnDetails = new URLSearchParams({
+      booking_date: date,
+      booking_time: time,
+      booking_name: String(name).trim(),
+      booking_service: selectedService.name,
+    }).toString();
     const backUrls = turnsPath
       ? {
-        success: `${bookingUrl}?payment_status=approved&source=mercadopago&booking_date=${date}&booking_time=${time}`,
-        failure: `${bookingUrl}?payment_status=failure&source=mercadopago&booking_date=${date}&booking_time=${time}`,
-        pending: `${bookingUrl}?payment_status=pending&source=mercadopago&booking_date=${date}&booking_time=${time}`,
+        success: `${bookingUrl}?payment_status=approved&source=mercadopago&${returnDetails}`,
+        failure: `${bookingUrl}?payment_status=failure&source=mercadopago&${returnDetails}`,
+        pending: `${bookingUrl}?payment_status=pending&source=mercadopago&${returnDetails}`,
       }
       : {
         success: `${siteUrl}/exito.html?payment_status=approved&source=mercadopago`,
