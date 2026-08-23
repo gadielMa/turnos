@@ -1,6 +1,21 @@
 import { corsHeaders, handleOptions, json } from "../_shared/cors.ts";
 import { adminClient, businessForSlug, slotsForDate } from "../_shared/supabase.ts";
 
+function minutes(value: string) {
+  const [hour, minute] = value.slice(0, 5).split(":").map(Number);
+  return hour * 60 + minute;
+}
+
+function slotIsFree(slot: string, duration: number, bookings: Array<{ booking_time: string; duration_minutes?: number }>) {
+  const start = minutes(slot);
+  const end = start + duration;
+  return !bookings.some((booking) => {
+    const bookedStart = minutes(booking.booking_time);
+    const bookedEnd = bookedStart + (Number(booking.duration_minutes) || 30);
+    return start < bookedEnd && bookedStart < end;
+  });
+}
+
 Deno.serve(async (req) => {
   const options = handleOptions(req);
   if (options) return options;
@@ -21,7 +36,7 @@ Deno.serve(async (req) => {
     const rangeEnd = month ? nextMonth!.toISOString().slice(0, 10) : date!;
     let query = supabase
       .from("bookings")
-      .select("booking_date, booking_time")
+      .select("booking_date, booking_time, duration_minutes")
       .eq("business_id", business.id)
       .in("status", ["pending", "confirmed"]);
     query = month ? query.gte("booking_date", rangeStart).lt("booking_date", rangeEnd) : query.eq("booking_date", date!);
@@ -30,26 +45,27 @@ Deno.serve(async (req) => {
     if (error) throw error;
     if (month) {
       const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Argentina/Buenos_Aires" });
-      const occupiedByDate = new Map<string, Set<string>>();
+      const occupiedByDate = new Map<string, Array<{ booking_time: string; duration_minutes?: number }>>();
       (data ?? []).forEach((row) => {
         const day = (row as { booking_date: string }).booking_date;
-        const values = occupiedByDate.get(day) || new Set<string>();
-        values.add((row as { booking_time: string }).booking_time.slice(0, 5));
+        const values = occupiedByDate.get(day) || [];
+        values.push(row as { booking_time: string; duration_minutes?: number });
         occupiedByDate.set(day, values);
       });
+      const slotDuration = Math.min(240, Math.max(15, Number(business.public_profile?.slot_minutes) || 30));
       const daysInMonth = new Date(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0).getDate();
       const availableDates = (await Promise.all(Array.from({ length: daysInMonth }, async (_, index) => {
         const day = `${month}-${String(index + 1).padStart(2, "0")}`;
         if (day < today) return null;
-        const occupied = occupiedByDate.get(day) || new Set<string>();
-        const available = (await slotsForDate(supabase, day, business.id)).filter((slot) => !occupied.has(slot));
+        const occupied = occupiedByDate.get(day) || [];
+        const available = (await slotsForDate(supabase, day, business.id, slotDuration)).filter((slot) => slotIsFree(slot, slotDuration, occupied));
         return available.length ? day : null;
       }))).filter(Boolean);
       return json({ month, available_dates: availableDates });
     }
 
-    const occupied = new Set((data ?? []).map((row) => row.booking_time.slice(0, 5)));
-    const available = (await slotsForDate(supabase, date!, business.id)).filter((slot) => !occupied.has(slot));
+    const slotDuration = Math.min(240, Math.max(15, Number(business.public_profile?.slot_minutes) || 30));
+    const available = (await slotsForDate(supabase, date!, business.id, slotDuration)).filter((slot) => slotIsFree(slot, slotDuration, data ?? []));
 
     return new Response(JSON.stringify({ date, available }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

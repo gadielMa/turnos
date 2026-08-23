@@ -26,6 +26,7 @@ Deno.serve(async (req) => {
       : [];
     const selectedService = services.find((item) => item.id === service && Number.isFinite(Number(item.price)));
     if (!selectedService) return json({ error: "El servicio seleccionado no está disponible" }, 400);
+    const bookingDuration = Math.min(240, Math.max(15, Number(business.public_profile?.slot_minutes) || 30));
     const configuredTestAmount = business.slug === "brian"
       ? Number(Deno.env.get("BRIAN_TEST_CHECKOUT_AMOUNT") || 0)
       : 0;
@@ -50,11 +51,12 @@ Deno.serve(async (req) => {
       service,
       booking_date: date,
       booking_time: `${time}:00`,
+      duration_minutes: bookingDuration,
       status: "pending",
     }).select("id, name, dni, service, booking_date, booking_time, status, expires_at").single();
 
     if (bookingError) {
-      if (bookingError.code === "23505") return json({ error: "Ese horario acaba de ser reservado" }, 409);
+      if (bookingError.code === "23505" || bookingError.code === "23P01") return json({ error: "Ese horario acaba de ser reservado" }, 409);
       throw bookingError;
     }
 

@@ -147,6 +147,7 @@ export async function slotsForDate(
   supabase: ReturnType<typeof adminClient>,
   date: string,
   businessId?: string,
+  slotMinutes = 60,
 ) {
   if (ARGENTINA_HOLIDAYS_2026.has(date)) return [];
   const { data: rules, error: rulesError } = await supabase
@@ -157,7 +158,7 @@ export async function slotsForDate(
   if (!rulesError && rules?.length) {
     return [...new Set((rules as AvailabilityRule[])
       .filter((rule) => ruleAppliesOnDate(rule, date))
-      .flatMap((rule) => slotsFromRange(rule.start_time, rule.end_time)))];
+      .flatMap((rule) => slotsFromRange(rule.start_time, rule.end_time, slotMinutes)))];
   }
 
   const hours = await hoursForDate(supabase, date, businessId);
