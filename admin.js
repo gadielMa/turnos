@@ -54,7 +54,13 @@ function applyAdminLocale() {
   setText('clientConfirmTitle', 'Confirmar ação'); setText('clientConfirmCancel', 'Cancelar'); setText('clientConfirmAccept', 'Excluir'); setText('#clientEmailModal h2', 'Enviar e-mail'); setLabel('clientEmailSubject', 'Assunto'); setLabel('clientEmailMessage', 'Mensagem'); setText('clientEmailCancel', 'Cancelar'); document.querySelector('#clientEmailForm button[type="submit"]').textContent = 'Enviar e-mail'; setText('noticeTitle', 'Detalhes do agendamento'); setText('noticeClose', 'Entendi');
   document.querySelector('.admin-footer p').innerHTML = '© 2026 <b>Induliru</b>. Inovação | Qualidade | Desenvolvimento. Todos os direitos reservados.';
 }
-applyAdminLocale();
+try {
+  applyAdminLocale();
+} catch (error) {
+  // La autenticación sigue disponible aun si una etiqueta de la traducción no
+  // está presente en una versión cacheada del HTML.
+  console.error('No se pudo aplicar toda la traducción del panel', error);
+}
 
 function showMessage(element, message, type) { element.textContent = message; element.className = `admin-message ${type}`; }
 function showNotice(title, details, actions = []) {
