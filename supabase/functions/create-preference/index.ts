@@ -16,11 +16,13 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { name, dni, service, date, time, business_slug } = body;
 
-    if (!name || !/^\d{7,8}$/.test(String(dni)) || !service || !date || !time) {
-      return json({ error: "Datos de reserva incompletos o inválidos" }, 400);
-    }
     const supabase = adminClient();
     const business = await businessForSlug(supabase, business_slug);
+    const isBrazilianProfile = business.public_profile?.locale === "pt-BR";
+    const validId = isBrazilianProfile ? /^\d{11}$/.test(String(dni)) : /^\d{7,8}$/.test(String(dni));
+    if (!name || !validId || !service || !date || !time) {
+      return json({ error: "Datos de reserva incompletos o inválidos" }, 400);
+    }
     const services = Array.isArray(business.public_profile?.services)
       ? business.public_profile.services as PublicService[]
       : [];

@@ -10,11 +10,12 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { name, dni, service, date, time, payment_id, business_slug } = body;
 
-    if (!name || !/^\d{7,8}$/.test(String(dni)) || !service || !date || !time) {
-      return json({ error: "Datos de reserva incompletos o inválidos" }, 400);
-    }
     const supabase = adminClient();
     const business = await businessForSlug(supabase, business_slug);
+    const validId = business.public_profile?.locale === "pt-BR" ? /^\d{11}$/.test(String(dni)) : /^\d{7,8}$/.test(String(dni));
+    if (!name || !validId || !service || !date || !time) {
+      return json({ error: "Datos de reserva incompletos o inválidos" }, 400);
+    }
     if (!(await isValidSlot(supabase, date, time, business.id))) {
       return json({ error: "Ese horario no está disponible para reservas" }, 400);
     }

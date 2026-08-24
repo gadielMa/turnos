@@ -7,11 +7,12 @@ Deno.serve(async (req) => {
 
   try {
     const dni = new URL(req.url).searchParams.get("dni") || "";
-    const businessSlug = new URL(req.url).searchParams.get("business") || "antonella-morselli";
-    if (!/^\d{7,8}$/.test(dni)) return json({ error: "DNI inválido" }, 400);
+    const businessSlug = new URL(req.url).searchParams.get("business") || "antonella";
 
     const supabase = adminClient();
     const business = await businessForSlug(supabase, businessSlug);
+    const validId = business.public_profile?.locale === "pt-BR" ? /^\d{11}$/.test(dni) : /^\d{7,8}$/.test(dni);
+    if (!validId) return json({ error: "Documento inválido" }, 400);
     await supabase.rpc("cleanup_expired_bookings");
     const { data, error } = await supabase.from("bookings")
       .select("id, name, dni, service, booking_date, booking_time, status, created_at")

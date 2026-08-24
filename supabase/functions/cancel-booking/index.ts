@@ -8,10 +8,10 @@ Deno.serve(async (req) => {
 
   try {
     const { id, dni, business_slug } = await req.json();
-    if (!id || !/^\d{7,8}$/.test(String(dni))) return json({ error: "Datos inválidos" }, 400);
-
     const supabase = adminClient();
     const business = await businessForSlug(supabase, business_slug);
+    const validId = business.public_profile?.locale === "pt-BR" ? /^\d{11}$/.test(String(dni)) : /^\d{7,8}$/.test(String(dni));
+    if (!id || !validId) return json({ error: "Datos inválidos" }, 400);
     const { data, error } = await supabase.from("bookings")
       .update({ status: "cancelled" })
       .eq("id", id)
