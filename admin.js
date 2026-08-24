@@ -488,13 +488,12 @@ async function refreshSession() {
       }
     }
     else if (!businessSlug) {
-      const { data: memberships, error: membershipError } = await supabaseClient
-        .from('business_members')
-        .select('business_id, businesses(slug)')
-        .eq('user_id', data.session.user.id)
-        .limit(1);
-      if (membershipError || !memberships?.length || !memberships[0].businesses?.slug) throw new Error('No tenés acceso a ningún negocio. Este usuario todavía no fue asignado a un negocio.');
-      window.location.replace(`${window.location.pathname}?business=${encodeURIComponent(memberships[0].businesses.slug)}`);
+      const response = await fetch(supabaseFunctionUrl('my-business'), {
+        headers: { apikey: SUPABASE_CONFIG.ANON_KEY, Authorization: `Bearer ${data.session.access_token}` },
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.business?.slug) throw new Error(result.error || 'No tenés acceso a ningún negocio. Este usuario todavía no fue asignado a un negocio.');
+      window.location.replace(`${window.location.pathname}?business=${encodeURIComponent(result.business.slug)}`);
       return;
     } else {
       const platformBusinessAccess = sessionStorage.getItem('platformBusinessAccess');
