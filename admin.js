@@ -2,7 +2,7 @@ const supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.URL, SUPABAS
 const loginView = document.getElementById('loginView');
 const dashboard = document.getElementById('dashboard');
 const businessDashboard = document.getElementById('businessDashboard');
-const businessSlug = new URLSearchParams(window.location.search).get('business');
+let businessSlug = new URLSearchParams(window.location.search).get('business');
 const isPlatformOwnerRoute = window.location.pathname.includes('/adminadmin');
 let currentBusiness = null;
 let platformOwnerBusinessAccess = false;
@@ -493,8 +493,13 @@ async function refreshSession() {
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.business?.slug) throw new Error(result.error || 'No tenés acceso a ningún negocio. Este usuario todavía no fue asignado a un negocio.');
-      window.location.replace(`${window.location.pathname}?business=${encodeURIComponent(result.business.slug)}`);
-      return;
+      // Instagram's in-app Safari can ignore window.location.replace after a
+      // login. Keep the navigation state in the URL, then load in-place.
+      businessSlug = result.business.slug;
+      const target = new URL(window.location.href);
+      target.searchParams.set('business', businessSlug);
+      window.history.replaceState({}, '', target);
+      await loadBusinessDashboard(data.session.user);
     } else {
       const platformBusinessAccess = sessionStorage.getItem('platformBusinessAccess');
       const allowPlatformOwner = profile.role === 'platform_owner' && platformBusinessAccess === businessSlug;
