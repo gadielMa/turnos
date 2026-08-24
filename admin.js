@@ -24,7 +24,37 @@ const ARGENTINA_HOLIDAYS_2026 = {
   '2026-08-17': 'Paso a la Inmortalidad de San Martín', '2026-10-12': 'Día del Respeto a la Diversidad Cultural',
   '2026-11-23': 'Día de la Soberanía Nacional', '2026-12-07': 'Feriado turístico', '2026-12-08': 'Inmaculada Concepción', '2026-12-25': 'Navidad',
 };
-function argentinaHoliday(date) { return ARGENTINA_HOLIDAYS_2026[dateOnly(date)] || null; }
+function isPortugueseAdmin() { return currentBusiness?.public_profile?.locale === 'pt-BR' || businessSlug === 'mirelle'; }
+function adminLocale() { return isPortugueseAdmin() ? 'pt-BR' : 'es-AR'; }
+function t(es, pt) { return isPortugueseAdmin() ? pt : es; }
+function argentinaHoliday(date) { return isPortugueseAdmin() ? null : (ARGENTINA_HOLIDAYS_2026[dateOnly(date)] || null); }
+function calendarButtonText() { return isPortugueseAdmin() ? { today: 'Hoje', month: 'Mês', week: 'Semana', day: 'Dia', list: 'Lista' } : { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día', list: 'Lista' }; }
+function setText(selector, value) { const element = document.querySelector(selector); if (element) element.textContent = value; }
+function setLabel(inputId, value) { const input = document.getElementById(inputId); const label = input?.closest('label'); if (label?.firstChild) label.firstChild.textContent = value; }
+function applyAdminLocale() {
+  if (!isPortugueseAdmin()) return;
+  document.documentElement.lang = 'pt-BR';
+  const menu = document.querySelectorAll('.global-menu a');
+  ['Sobre nós', 'Serviços', 'Agendamentos', 'Contato'].forEach((text, index) => { if (menu[index]) menu[index].textContent = text; });
+  setText('#businessDashboard .business-welcome p', 'Gerencie seus agendamentos e horários.'); setText('businessLogoutBtn', 'Sair');
+  setText('appointmentsTab', 'Agendamentos'); setText('scheduleTab', 'Editar horários disponíveis'); setText('clientsTab', 'Clientes'); setText('billingTab', 'Faturamento');
+  setText('cashBookingButton', '+ Adicionar agendamento manual'); setText('appointmentsEarlyHours', 'Mostrar 00:00–06:00'); setText('scheduleEarlyHours', 'Mostrar 00:00–06:00'); setText('newScheduleButton', '+ Criar horário');
+  const legend = document.querySelectorAll('.calendar-legend .legend-item'); ['Pago pelo Mercado Pago', 'Pagamento em dinheiro', 'Pendente'].forEach((text, index) => { if (legend[index]) legend[index].childNodes[1].textContent = text; });
+  setText('#schedulePanel .calendar-help', 'Selecione um intervalo para criar um horário. Arraste o bloco ou suas bordas para alterá-lo. Clique em um bloco para editá-lo.');
+  setText('#schedulePanel .services-summary h3', 'Serviços'); setText('#schedulePanel .services-summary p', 'Serviços e valores que seus clientes veem ao agendar.'); setText('#serviceForm button', 'Adicionar serviço');
+  setLabel('serviceName', 'Serviço'); setLabel('servicePrice', 'Preço'); setLabel('serviceDescription', 'Descrição'); document.getElementById('serviceName').placeholder = 'Ex.: Consulta psicológica'; document.getElementById('serviceDescription').placeholder = 'Ex.: Atendimento individual de 50 minutos';
+  setText('#clientsPanel h2', 'Clientes'); setText('#clientsPanel > p', 'Pessoas que agendaram ou foram cadastradas manualmente neste negócio.'); setText('#clientForm button', 'Adicionar cliente');
+  setLabel('clientName', 'Nome'); setLabel('clientDni', 'CPF'); setLabel('clientEmail', 'E-mail'); setLabel('clientWhatsapp', 'WhatsApp'); const clientCpf = document.getElementById('clientDni'); clientCpf.pattern = '[0-9]{11}'; clientCpf.minLength = 11; clientCpf.maxLength = 11;
+  document.querySelectorAll('.clients-table th').forEach((cell, index) => { cell.textContent = ['Nome', 'CPF', 'Contato', 'Ações'][index]; });
+  setText('#billingPanel h2', 'Faturamento'); setText('#billingPanel > p', 'Resumo dos agendamentos pagos durante o mês selecionado.'); setLabel('billingMonth', 'Mês'); document.querySelectorAll('.billing-card small').forEach((cell, index) => { cell.textContent = ['Total faturado', 'Agendamentos pagos', 'Ticket médio'][index]; });
+  document.querySelectorAll('#billingPanel h3').forEach((cell, index) => { cell.textContent = index === 0 ? 'Por tipo de atendimento' : 'Por cliente'; }); document.querySelectorAll('.billing-table thead tr').forEach((row, rowIndex) => row.querySelectorAll('th').forEach((cell, index) => { cell.textContent = rowIndex === 0 ? ['Serviço', 'Agendamentos', 'Total'][index] : ['Cliente', 'Agendamentos', 'Total'][index]; }));
+  setText('scheduleModalTitle', 'Novo horário'); setLabel('scheduleDate', 'Data inicial'); setLabel('scheduleStart', 'Das'); setLabel('scheduleEnd', 'Até'); setLabel('scheduleFrequency', 'Repetir'); setLabel('scheduleInterval', 'A cada'); setLabel('scheduleOccurrences', 'Repetições (opcional)'); setLabel('scheduleUntil', 'Repetir até (opcional)'); setText('scheduleDelete', 'Excluir'); setText('scheduleCancel', 'Cancelar'); document.querySelector('#scheduleForm button[type="submit"]').textContent = 'Salvar';
+  setText('#cashModal h2', 'Adicionar agendamento em dinheiro'); setLabel('cashName', 'Nome do cliente'); setLabel('cashDni', 'CPF'); const cashCpf = document.getElementById('cashDni'); cashCpf.pattern = '[0-9]{11}'; cashCpf.minLength = 11; cashCpf.maxLength = 11; setLabel('cashPaymentMethod', 'Status do pagamento'); document.querySelector('#cashPaymentMethod option[value="cash"]').textContent = 'Pagamento em dinheiro'; document.querySelector('#cashPaymentMethod option[value="pending"]').textContent = 'Pendente'; setLabel('cashService', 'Serviço'); setText('cashCancel', 'Cancelar'); document.querySelector('#cashForm button[type="submit"]').textContent = 'Salvar agendamento';
+  setText('#clientEditModal h2', 'Editar cliente'); setLabel('editClientName', 'Nome'); setLabel('editClientDni', 'CPF'); setLabel('editClientEmail', 'E-mail'); setLabel('editClientWhatsapp', 'WhatsApp'); const editCpf = document.getElementById('editClientDni'); editCpf.pattern = '[0-9]{11}'; editCpf.minLength = 11; editCpf.maxLength = 11; setText('clientEditCancel', 'Cancelar'); document.querySelector('#clientEditForm button[type="submit"]').textContent = 'Salvar alterações';
+  setText('clientConfirmTitle', 'Confirmar ação'); setText('clientConfirmCancel', 'Cancelar'); setText('clientConfirmAccept', 'Excluir'); setText('#clientEmailModal h2', 'Enviar e-mail'); setLabel('clientEmailSubject', 'Assunto'); setLabel('clientEmailMessage', 'Mensagem'); setText('clientEmailCancel', 'Cancelar'); document.querySelector('#clientEmailForm button[type="submit"]').textContent = 'Enviar e-mail'; setText('noticeTitle', 'Detalhes do agendamento'); setText('noticeClose', 'Entendi');
+  document.querySelector('.admin-footer p').innerHTML = '© 2026 <b>Induliru</b>. Inovação | Qualidade | Desenvolvimento. Todos os direitos reservados.';
+}
+applyAdminLocale();
 
 function showMessage(element, message, type) { element.textContent = message; element.className = `admin-message ${type}`; }
 function showNotice(title, details, actions = []) {
@@ -131,31 +161,31 @@ async function loadAppointmentsCalendar() {
 
   appointmentsCalendar?.destroy();
   appointmentsCalendar = new FullCalendar.Calendar(document.getElementById('appointmentsCalendar'), {
-    initialView: preservedView || 'timeGridWeek', initialDate: preservedDate || new Date(), locale: 'es', firstDay: 1, allDaySlot: false,
-    buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día', list: 'Lista' },
+    initialView: preservedView || 'timeGridWeek', initialDate: preservedDate || new Date(), locale: isPortugueseAdmin() ? 'pt-br' : 'es', firstDay: 1, allDaySlot: false,
+    buttonText: calendarButtonText(),
     slotMinTime: '06:00:00', slotMaxTime: '24:00:00', slotLabelInterval: '01:00:00', height: 'auto',
     headerToolbar: calendarToolbar(), events, ...calendarDensity(),
     eventClick: (info) => {
       const booking = info.event.extendedProps.booking;
-      const details = [['Cliente', booking.name], ['Servicio', serviceNames[booking.service] || booking.service], ['Fecha y hora', `${booking.booking_date} · ${booking.booking_time.slice(0, 5)}`], ['Estado', booking.status === 'confirmed' ? 'Confirmado' : 'Pendiente de confirmación']];
+      const details = [[t('Cliente', 'Cliente'), booking.name], [t('Servicio', 'Serviço'), serviceNames[booking.service] || booking.service], [t('Fecha y hora', 'Data e horário'), `${booking.booking_date} · ${booking.booking_time.slice(0, 5)}`], [t('Estado', 'Status'), booking.status === 'confirmed' ? t('Confirmado', 'Confirmado') : t('Pendiente de confirmación', 'Pendente de confirmação')]];
       const actions = booking.status === 'pending' ? [{
-        label: 'Confirmar pago de Mercado Pago',
+        label: t('Confirmar pago de Mercado Pago', 'Confirmar pagamento do Mercado Pago'),
         onClick: async (event) => {
           const button = event.currentTarget;
           button.disabled = true;
-          button.textContent = 'Confirmando…';
+          button.textContent = t('Confirmando…', 'Confirmando…');
           const { error: updateError } = await supabaseClient.from('bookings').update({ status: 'confirmed', payment_method: 'mercadopago' }).eq('id', booking.id).eq('business_id', currentBusiness.id).eq('status', 'pending');
           if (updateError) {
             button.disabled = false;
-            button.textContent = 'Confirmar pago de Mercado Pago';
-            return showNotice('No se pudo confirmar', [['Detalle', updateError.message]]);
+            button.textContent = t('Confirmar pago de Mercado Pago', 'Confirmar pagamento do Mercado Pago');
+            return showNotice(t('No se pudo confirmar', 'Não foi possível confirmar'), [[t('Detalle', 'Detalhe'), updateError.message]]);
           }
           closeNotice();
           await loadAppointmentsCalendar();
           if (document.getElementById('billingPanel').classList.contains('active')) await loadBilling();
         },
       }] : [];
-      showNotice('Detalle del turno', details, actions);
+      showNotice(t('Detalle del turno', 'Detalhes do agendamento'), details, actions);
     },
   });
   appointmentsCalendar.render();
@@ -185,8 +215,8 @@ async function loadClients() {
     if (client.whatsapp) {
       const whatsapp = document.createElement('a'); whatsapp.className = 'client-whatsapp-link client-action'; whatsapp.href = `https://wa.me/${String(client.whatsapp).replace(/\D/g, '')}`; whatsapp.target = '_blank'; whatsapp.rel = 'noopener'; whatsapp.title = `Abrir WhatsApp de ${client.whatsapp}`; whatsapp.innerHTML = '<i class="fab fa-whatsapp"></i> Wsp'; actions.appendChild(whatsapp);
     }
-    const edit = document.createElement('button'); edit.className = 'client-action client-edit'; edit.dataset.action = 'edit'; edit.dataset.id = client.id; edit.dataset.name = client.name; edit.dataset.dni = client.dni; edit.dataset.email = client.email || ''; edit.dataset.whatsapp = client.whatsapp || ''; edit.textContent = 'Editar';
-    const remove = document.createElement('button'); remove.className = 'client-action client-delete'; remove.dataset.action = 'delete'; remove.dataset.id = client.id; remove.dataset.name = client.name; remove.dataset.dni = client.dni; remove.textContent = 'Eliminar';
+    const edit = document.createElement('button'); edit.className = 'client-action client-edit'; edit.dataset.action = 'edit'; edit.dataset.id = client.id; edit.dataset.name = client.name; edit.dataset.dni = client.dni; edit.dataset.email = client.email || ''; edit.dataset.whatsapp = client.whatsapp || ''; edit.textContent = t('Editar', 'Editar');
+    const remove = document.createElement('button'); remove.className = 'client-action client-delete'; remove.dataset.action = 'delete'; remove.dataset.id = client.id; remove.dataset.name = client.name; remove.dataset.dni = client.dni; remove.textContent = t('Eliminar', 'Excluir');
     actions.append(edit, remove); row.append(name, dni, contact, actions); list.appendChild(row);
   });
 }
@@ -261,8 +291,8 @@ function populateCashServices() {
   services.forEach((service) => select.appendChild(new Option(`${service.name} — ${formatMoney(Number(service.price) || 0)}`, service.id)));
 }
 function bookingDurationMinutes() { return Number(currentBusiness?.public_profile?.slot_minutes) || 60; }
-function formatMoney(value) { return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value); }
-function formatAdminDate(value) { return new Intl.DateTimeFormat('es-AR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(parseDate(value)); }
+function formatMoney(value) { return new Intl.NumberFormat(adminLocale(), { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value); }
+function formatAdminDate(value) { return new Intl.DateTimeFormat(adminLocale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(parseDate(value)); }
 function setCashBookingDate(value) {
   document.getElementById('cashDate').value = value;
   document.getElementById('cashDateLabel').textContent = formatAdminDate(value);
@@ -272,10 +302,10 @@ function openCashDateCalendar() {
   const selected = document.getElementById('cashDate').value || today;
   cashDateCalendar?.destroy();
   cashDateCalendar = new FullCalendar.Calendar(document.getElementById('cashDateCalendar'), {
-    initialView: 'dayGridMonth', initialDate: selected, locale: 'es', firstDay: 1, height: 'auto', fixedWeekCount: false,
+    initialView: 'dayGridMonth', initialDate: selected, locale: isPortugueseAdmin() ? 'pt-br' : 'es', firstDay: 1, height: 'auto', fixedWeekCount: false,
     validRange: { start: today }, selectable: true, selectMirror: true,
     headerToolbar: { left: 'prev', center: 'title', right: 'next' },
-    buttonText: { today: 'Hoy' },
+    buttonText: { today: t('Hoy', 'Hoje') },
     dayHeaderFormat: { weekday: 'narrow' },
     select: (info) => setCashBookingDate(dateOnly(info.start)),
     dateClick: (info) => setCashBookingDate(dateOnly(info.date)),
@@ -292,7 +322,7 @@ function renderBusinessServices() {
   const services = businessServices();
   if (!services.length) {
     const empty = document.createElement('p');
-    empty.textContent = 'Todavía no hay servicios configurados.';
+    empty.textContent = t('Todavía no hay servicios configurados.', 'Ainda não há serviços configurados.');
     container.appendChild(empty);
     return;
   }
@@ -306,7 +336,7 @@ function renderBusinessServices() {
     const remove = document.createElement('button');
     remove.type = 'button';
     remove.dataset.serviceId = service.id;
-    remove.textContent = 'Eliminar servicio';
+    remove.textContent = t('Eliminar servicio', 'Excluir serviço');
     card.append(name, price, remove);
     container.appendChild(card);
   });
@@ -334,7 +364,7 @@ function ensureBillingMonths() {
     const date = new Date(now.getFullYear(), now.getMonth() + offset, 1);
     const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     const option = document.createElement('option'); option.value = value;
-    const label = new Intl.DateTimeFormat('es-AR', { month: 'long', year: 'numeric' }).format(date);
+    const label = new Intl.DateTimeFormat(adminLocale(), { month: 'long', year: 'numeric' }).format(date);
     option.textContent = `${label.charAt(0).toUpperCase()}${label.slice(1)}`;
     select.appendChild(option);
   }
@@ -365,7 +395,7 @@ async function loadBilling() {
 function openScheduleModal({ ruleIndex = null, date, start = '14:00', end = '15:00' }) {
   editingRuleIndex = ruleIndex;
   const rule = ruleIndex === null ? null : scheduleRules[ruleIndex];
-  document.getElementById('scheduleModalTitle').textContent = rule ? 'Editar horario' : 'Nuevo horario';
+  document.getElementById('scheduleModalTitle').textContent = rule ? t('Editar horario', 'Editar horário') : t('Nuevo horario', 'Novo horário');
   document.getElementById('scheduleDate').value = rule?.start_date || date;
   document.getElementById('scheduleStart').value = (rule?.start_time || start).slice(0, 5);
   document.getElementById('scheduleEnd').value = (rule?.end_time || end).slice(0, 5);
@@ -387,6 +417,7 @@ async function loadBusinessDashboard(user, allowPlatformOwner = platformOwnerBus
   if ((membershipError || !membership) && !allowPlatformOwner) throw new Error('No tenés acceso a este negocio');
 
   currentBusiness = business;
+  applyAdminLocale();
   document.getElementById('businessTitle').textContent = business.name;
   renderBusinessServices();
   populateCashServices();
@@ -396,8 +427,8 @@ async function loadBusinessDashboard(user, allowPlatformOwner = platformOwnerBus
   scheduleRules = rules || [];
   scheduleCalendar?.destroy();
   scheduleCalendar = new FullCalendar.Calendar(document.getElementById('hoursCalendar'), {
-    initialView: 'timeGridWeek', initialDate: new Date(), locale: 'es', firstDay: 1, allDaySlot: false,
-    buttonText: { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día', list: 'Lista' },
+    initialView: 'timeGridWeek', initialDate: new Date(), locale: isPortugueseAdmin() ? 'pt-br' : 'es', firstDay: 1, allDaySlot: false,
+    buttonText: calendarButtonText(),
     slotMinTime: '06:00:00', slotMaxTime: '24:00:00', snapDuration: '00:15:00', slotLabelInterval: '01:00:00', height: 'auto', editable: true, selectable: true,
     headerToolbar: calendarToolbar(), ...calendarDensity(),
     events: (info, success) => success(eventDataForRange(info.start, info.end)),
@@ -526,20 +557,20 @@ document.getElementById('serviceForm').addEventListener('submit', async (event) 
   const id = serviceIdFromName(name);
   const price = Number(document.getElementById('servicePrice').value);
   const description = document.getElementById('serviceDescription').value.trim();
-  if (!id || !Number.isFinite(price) || price <= 0) return showMessage(message, 'Completá un nombre y un precio válido.', 'error');
+  if (!id || !Number.isFinite(price) || price <= 0) return showMessage(message, t('Completá un nombre y un precio válido.', 'Preencha um nome e um preço válidos.'), 'error');
   const services = businessServices();
-  if (services.some((service) => service.id === id)) return showMessage(message, 'Ya existe un servicio con ese nombre.', 'error');
+  if (services.some((service) => service.id === id)) return showMessage(message, t('Ya existe un servicio con ese nombre.', 'Já existe um serviço com esse nome.'), 'error');
   try {
     await saveBusinessServices([...services, { id, name, price, description }]);
     event.target.reset();
-    showMessage(message, 'Servicio agregado correctamente.', 'success');
+    showMessage(message, t('Servicio agregado correctamente.', 'Serviço adicionado com sucesso.'), 'success');
   } catch (error) { showMessage(message, error.message, 'error'); }
 });
 document.getElementById('businessServices').addEventListener('click', async (event) => {
   const button = event.target.closest('button[data-service-id]');
   if (!button) return;
   const services = businessServices().filter((service) => service.id !== button.dataset.serviceId);
-  try { await saveBusinessServices(services); showMessage(document.getElementById('servicesMessage'), 'Servicio eliminado.', 'success'); }
+  try { await saveBusinessServices(services); showMessage(document.getElementById('servicesMessage'), t('Servicio eliminado.', 'Serviço excluído.'), 'success'); }
   catch (error) { showMessage(document.getElementById('servicesMessage'), error.message, 'error'); }
 });
 document.getElementById('clientsTab').addEventListener('click', () => {
@@ -561,7 +592,7 @@ document.getElementById('clientForm').addEventListener('submit', async (event) =
   const email = document.getElementById('clientEmail').value.trim().toLowerCase() || null;
   const whatsapp = document.getElementById('clientWhatsapp').value.trim() || null;
   const message = document.getElementById('clientsMessage');
-  if (!/^\d{7,8}$/.test(dni)) return showMessage(message, 'El DNI debe tener 7 u 8 dígitos.', 'error');
+  if (!(isPortugueseAdmin() ? /^\d{11}$/.test(dni) : /^\d{7,8}$/.test(dni))) return showMessage(message, t('El DNI debe tener 7 u 8 dígitos.', 'O CPF deve ter 11 dígitos.'), 'error');
   const { error } = await supabaseClient.from('clients').upsert({ business_id: currentBusiness.id, name, dni, email, whatsapp }, { onConflict: 'business_id,dni' });
   if (error) return showMessage(message, error.message, 'error');
   showMessage(message, 'Cliente guardado correctamente.', 'success');
@@ -574,15 +605,15 @@ function showClientNotice(title, text) {
   document.getElementById('clientConfirmTitle').textContent = title;
   document.getElementById('clientConfirmText').textContent = text;
   document.getElementById('clientConfirmAccept').style.display = 'none';
-  document.getElementById('clientConfirmCancel').textContent = 'Entendido';
+  document.getElementById('clientConfirmCancel').textContent = t('Entendido', 'Entendi');
   document.getElementById('clientConfirmModal').classList.add('open');
 }
 function showClientDeleteConfirm(id, name) {
   pendingClientDeleteId = id;
-  document.getElementById('clientConfirmTitle').textContent = 'Eliminar cliente';
-  document.getElementById('clientConfirmText').textContent = `¿Querés eliminar a ${name} de la lista? Sus reservas no se borrarán.`;
+  document.getElementById('clientConfirmTitle').textContent = t('Eliminar cliente', 'Excluir cliente');
+  document.getElementById('clientConfirmText').textContent = isPortugueseAdmin() ? `Deseja excluir ${name} da lista? Os agendamentos não serão apagados.` : `¿Querés eliminar a ${name} de la lista? Sus reservas no se borrarán.`;
   document.getElementById('clientConfirmAccept').style.display = 'inline-block';
-  document.getElementById('clientConfirmCancel').textContent = 'Cancelar';
+  document.getElementById('clientConfirmCancel').textContent = t('Cancelar', 'Cancelar');
   document.getElementById('clientConfirmModal').classList.add('open');
 }
 
@@ -624,7 +655,7 @@ document.getElementById('clientsList').addEventListener('click', async (event) =
     const hasBookings = Boolean(bookings?.length);
     document.getElementById('editClientDni').readOnly = hasBookings;
     document.getElementById('editClientNotice').style.display = hasBookings ? 'block' : 'none';
-    document.getElementById('editClientNotice').textContent = hasBookings ? 'Este cliente tiene reservas: el DNI no se puede modificar.' : '';
+    document.getElementById('editClientNotice').textContent = hasBookings ? t('Este cliente tiene reservas: el DNI no se puede modificar.', 'Este cliente tem agendamentos: o CPF não pode ser alterado.') : '';
     document.getElementById('clientEditModal').classList.add('open');
   }
 });
@@ -663,7 +694,7 @@ document.getElementById('clientEmailForm').addEventListener('submit', async (eve
 function toggleEarlyHours(kind, calendar, button) {
   earlyHoursVisible[kind] = !earlyHoursVisible[kind];
   calendar?.setOption('slotMinTime', earlyHoursVisible[kind] ? '00:00:00' : '06:00:00');
-  button.textContent = earlyHoursVisible[kind] ? 'Ocultar 00:00–06:00' : 'Mostrar 00:00–06:00';
+  button.textContent = earlyHoursVisible[kind] ? t('Ocultar 00:00–06:00', 'Ocultar 00:00–06:00') : t('Mostrar 00:00–06:00', 'Mostrar 00:00–06:00');
 }
 document.getElementById('appointmentsEarlyHours').addEventListener('click', (event) => toggleEarlyHours('appointments', appointmentsCalendar, event.currentTarget));
 document.getElementById('scheduleEarlyHours').addEventListener('click', (event) => toggleEarlyHours('schedule', scheduleCalendar, event.currentTarget));
@@ -680,8 +711,8 @@ document.getElementById('cashForm').addEventListener('submit', async (event) => 
   event.preventDefault();
   const date = document.getElementById('cashDate').value;
   const cashDni = document.getElementById('cashDni').value.trim();
-  if (!date || date < dateOnly(new Date())) return showNotice('Revisá la fecha', [['Detalle', 'Elegí una fecha de hoy o posterior en el calendario.']]);
-  if (!/^\d{7,8}$/.test(cashDni)) return showNotice('Revisá los datos', [['DNI', 'Debe tener 7 u 8 dígitos.']]);
+  if (!date || date < dateOnly(new Date())) return showNotice(t('Revisá la fecha', 'Revise a data'), [[t('Detalle', 'Detalhe'), t('Elegí una fecha de hoy o posterior en el calendario.', 'Escolha uma data de hoje ou posterior no calendário.')]]);
+  if (!(isPortugueseAdmin() ? /^\d{11}$/.test(cashDni) : /^\d{7,8}$/.test(cashDni))) return showNotice(t('Revisá los datos', 'Revise os dados'), [[t('DNI', 'CPF'), t('Debe tener 7 u 8 dígitos.', 'Deve ter 11 dígitos.')]]);
   const { error } = await supabaseClient.from('bookings').insert({
     business_id: currentBusiness.id,
     name: document.getElementById('cashName').value.trim(),
