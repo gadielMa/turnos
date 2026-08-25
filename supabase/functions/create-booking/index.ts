@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
     const isBrazilian = business.public_profile?.locale === "pt-BR";
     const validId = isBrazilian ? /^\d{11}$/.test(String(dni)) : /^\d{7,8}$/.test(String(dni));
     if (!name || !validId || !date || !time) return json({ error: text("Datos de reserva incompletos o inválidos", "Dados do agendamento incompletos ou inválidos") }, 400);
-    const durationMinutes = Math.min(240, Math.max(15, Number(business.public_profile?.slot_minutes) || 60));
+    const durationMinutes = Math.min(1440, Math.max(15, Number(business.public_profile?.slot_minutes) || 60));
     if (!(await isValidSlot(supabase, date, time, business.id, durationMinutes))) return json({ error: text("Ese horario no está disponible para reservas", "Este horário não está disponível para agendamento") }, 400);
 
     const { data: booking, error: bookingError } = await supabase.from("bookings").insert({

@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
         values.push(row as { booking_time: string; duration_minutes?: number });
         occupiedByDate.set(day, values);
       });
-      const slotDuration = Math.min(240, Math.max(15, Number(business.public_profile?.slot_minutes) || 30));
+      const slotDuration = Math.min(1440, Math.max(15, Number(business.public_profile?.slot_minutes) || 30));
       const daysInMonth = new Date(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 0).getDate();
       const availableDates = (await Promise.all(Array.from({ length: daysInMonth }, async (_, index) => {
         const day = `${month}-${String(index + 1).padStart(2, "0")}`;
@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
       return json({ month, available_dates: availableDates });
     }
 
-    const slotDuration = Math.min(240, Math.max(15, Number(business.public_profile?.slot_minutes) || 30));
+    const slotDuration = Math.min(1440, Math.max(15, Number(business.public_profile?.slot_minutes) || 30));
     const available = (await slotsForDate(supabase, date!, business.id, slotDuration)).filter((slot) => slotIsFree(slot, slotDuration, data ?? []));
 
     return new Response(JSON.stringify({ date, available }), {

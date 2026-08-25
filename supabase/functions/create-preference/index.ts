@@ -28,7 +28,7 @@ Deno.serve(async (req) => {
       : [];
     const selectedService = services.find((item) => item.id === service && Number.isFinite(Number(item.price)));
     if (!selectedService) return json({ error: "El servicio seleccionado no está disponible" }, 400);
-    const bookingDuration = Math.min(240, Math.max(15, Number(business.public_profile?.slot_minutes) || 30));
+    const bookingDuration = Math.min(1440, Math.max(15, Number(business.public_profile?.slot_minutes) || 30));
     const configuredReservationAmount = Number(business.public_profile?.reservation_amount || 0);
     const configuredTestAmount = business.slug === "brian"
       ? Number(Deno.env.get("BRIAN_TEST_CHECKOUT_AMOUNT") || 0)
