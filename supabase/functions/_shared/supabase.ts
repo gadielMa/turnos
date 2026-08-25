@@ -158,7 +158,7 @@ export async function slotsForDate(
   if (!rulesError && rules?.length) {
     return [...new Set((rules as AvailabilityRule[])
       .filter((rule) => ruleAppliesOnDate(rule, date))
-      .flatMap((rule) => slotsFromRange(rule.start_time, rule.end_time, slotMinutes)))];
+      .flatMap((rule) => slotsFromRange(rule.start_time, rule.end_time, slotMinutes)))].sort();
   }
 
   const hours = await hoursForDate(supabase, date, businessId);
@@ -172,7 +172,8 @@ export async function isValidSlot(
   date: string,
   time: string,
   businessId?: string,
+  slotMinutes = 60,
 ) {
-  const slots = await slotsForDate(supabase, date, businessId);
+  const slots = await slotsForDate(supabase, date, businessId, slotMinutes);
   return slots.includes(time.slice(0, 5));
 }
