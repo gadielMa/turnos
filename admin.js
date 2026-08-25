@@ -243,6 +243,7 @@ async function loadPlatformBusinesses() {
   const { data: businesses, error: businessesError } = await supabaseClient
     .from('businesses')
     .select('id, name, slug, status')
+    .eq('status', 'active')
     .order('name');
   if (businessesError) throw businessesError;
 
