@@ -40,6 +40,7 @@ Deno.serve(async (req) => {
     await supabase.from("clients").upsert({ business_id: business.id, name: String(name).trim(), dni: String(dni) }, { onConflict: "business_id,dni" });
     return json({ booking }, 201);
   } catch (error) {
-    return json({ error: error instanceof Error ? error.message : "Error interno" }, 500);
+    const message = error instanceof Error ? error.message : (typeof error === "object" && error && "message" in error ? String(error.message) : "Error interno");
+    return json({ error: message === "Error interno" ? "Não foi possível confirmar o agendamento. Tente novamente." : message }, 500);
   }
 });
