@@ -307,7 +307,7 @@ function populateCashServices() {
   services.forEach((service) => select.appendChild(new Option(`${service.name} — ${formatMoney(Number(service.price) || 0)}`, service.id)));
 }
 function bookingDurationMinutes() { return Number(currentBusiness?.public_profile?.slot_minutes) || 60; }
-function formatMoney(value) { return new Intl.NumberFormat(adminLocale(), { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value); }
+function formatMoney(value) { return new Intl.NumberFormat(adminLocale(), { style: 'currency', currency: isPortugueseAdmin() ? 'BRL' : 'ARS', maximumFractionDigits: 0 }).format(value); }
 function formatAdminDate(value) { return new Intl.DateTimeFormat(adminLocale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(parseDate(value)); }
 function setCashBookingDate(value) {
   document.getElementById('cashDate').value = value;
