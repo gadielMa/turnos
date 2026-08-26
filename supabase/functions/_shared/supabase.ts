@@ -33,7 +33,7 @@ export function adminClient() {
 
 export async function businessForSlug(
   supabase: ReturnType<typeof adminClient>,
-  slug = "antonella",
+  slug = "brian",
 ) {
   const { data, error } = await supabase
     .from("businesses")

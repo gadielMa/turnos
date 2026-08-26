@@ -3,7 +3,7 @@
 const SUPABASE_CONFIG = {
     URL: 'https://jbrjsvkdnyzptkxnflbe.supabase.co',
     ANON_KEY: 'sb_publishable_L7rQxIHg2i7gbuozJrgfWg_NjD3Elz1',
-    BUSINESS_SLUG: 'antonella-morselli'
+    BUSINESS_SLUG: 'brian'
 };
 
 function supabaseFunctionUrl(functionName) {

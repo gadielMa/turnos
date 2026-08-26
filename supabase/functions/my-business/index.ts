@@ -29,6 +29,7 @@ Deno.serve(async (req) => {
       .from("businesses")
       .select("id, name, slug")
       .eq("id", membership.business_id)
+      .eq("status", "active")
       .maybeSingle();
     if (businessError) throw businessError;
     if (!business) return json({ error: "No se encontró el negocio asignado." }, 404);

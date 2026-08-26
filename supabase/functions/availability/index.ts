@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
     const url = new URL(req.url);
     const date = url.searchParams.get("date");
     const month = url.searchParams.get("month");
-    const businessSlug = url.searchParams.get("business") || "antonella";
+    const businessSlug = url.searchParams.get("business") || "brian";
     if ((!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) && (!month || !/^\d{4}-\d{2}$/.test(month))) return json({ error: "Fecha inválida" }, 400);
 
     const supabase = adminClient();

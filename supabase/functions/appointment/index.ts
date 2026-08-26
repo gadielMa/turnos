@@ -7,7 +7,7 @@ Deno.serve(async (req) => {
 
   try {
     const dni = new URL(req.url).searchParams.get("dni") || "";
-    const businessSlug = new URL(req.url).searchParams.get("business") || "antonella";
+    const businessSlug = new URL(req.url).searchParams.get("business") || "brian";
 
     const supabase = adminClient();
     const business = await businessForSlug(supabase, businessSlug);
