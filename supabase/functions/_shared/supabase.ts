@@ -63,6 +63,7 @@ type AvailabilityRule = {
   until_date: string | null;
   weekdays: number[];
   active: boolean;
+  workplace_id?: string;
 };
 
 const ARGENTINA_HOLIDAYS_2026 = new Set([
@@ -149,22 +150,35 @@ export async function slotsForDate(
   businessId?: string,
   slotMinutes = 60,
 ) {
+  return (await slotDetailsForDate(supabase, date, businessId, slotMinutes)).map((slot) => slot.time);
+}
+
+export async function slotDetailsForDate(
+  supabase: ReturnType<typeof adminClient>,
+  date: string,
+  businessId?: string,
+  slotMinutes = 60,
+) {
   if (ARGENTINA_HOLIDAYS_2026.has(date)) return [];
   const { data: rules, error: rulesError } = await supabase
     .from("availability_rules")
-    .select("start_date, start_time, end_time, frequency, interval_count, occurrences, until_date, weekdays, active")
+    .select("start_date, start_time, end_time, frequency, interval_count, occurrences, until_date, weekdays, active, workplace_id")
     .eq("business_id", businessId)
     .eq("active", true);
   if (!rulesError && rules?.length) {
-    return [...new Set((rules as AvailabilityRule[])
-      .filter((rule) => ruleAppliesOnDate(rule, date))
-      .flatMap((rule) => slotsFromRange(rule.start_time, rule.end_time, slotMinutes)))].sort();
+    const slots = new Map<string, { time: string; workplace_id: string }>();
+    (rules as AvailabilityRule[]).filter((rule) => ruleAppliesOnDate(rule, date)).forEach((rule) => {
+      slotsFromRange(rule.start_time, rule.end_time, slotMinutes).forEach((time) => {
+        if (!slots.has(time)) slots.set(time, { time, workplace_id: rule.workplace_id || "office" });
+      });
+    });
+    return [...slots.values()].sort((left, right) => left.time.localeCompare(right.time));
   }
 
   const hours = await hoursForDate(supabase, date, businessId);
   if (!hours || !hours.active) return [];
 
-  return slotsFromRange(hours.start_time, hours.end_time, hours.slot_minutes);
+  return slotsFromRange(hours.start_time, hours.end_time, hours.slot_minutes).map((time) => ({ time, workplace_id: "office" }));
 }
 
 export async function isValidSlot(

@@ -1,5 +1,5 @@
 import { corsHeaders, handleOptions, json } from "../_shared/cors.ts";
-import { adminClient, businessForSlug, slotsForDate } from "../_shared/supabase.ts";
+import { adminClient, businessForSlug, slotDetailsForDate, slotsForDate } from "../_shared/supabase.ts";
 
 function minutes(value: string) {
   const [hour, minute] = value.slice(0, 5).split(":").map(Number);
@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
     }
 
     const slotDuration = Math.min(1440, Math.max(15, Number(business.public_profile?.slot_minutes) || 30));
-    const available = (await slotsForDate(supabase, date!, business.id, slotDuration)).filter((slot) => slotIsFree(slot, slotDuration, data ?? []));
+    const available = (await slotDetailsForDate(supabase, date!, business.id, slotDuration)).filter((slot) => slotIsFree(slot.time, slotDuration, data ?? []));
 
     return new Response(JSON.stringify({ date, available }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
