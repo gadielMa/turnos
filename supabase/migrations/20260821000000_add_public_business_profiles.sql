@@ -2,21 +2,6 @@
 alter table public.businesses
   add column if not exists public_profile jsonb not null default '{}'::jsonb;
 
-update public.businesses
-set public_profile = jsonb_build_object(
-  'category', 'Masajista profesional',
-  'headline', 'Un espacio para volver a sentirte bien.',
-  'description', 'Sesiones personalizadas para aliviar tensiones, recuperar movilidad y regalarte un momento de bienestar.',
-  'location', 'Villa Devoto, CABA',
-  'accent', '#3f6659',
-  'services', jsonb_build_array(
-    jsonb_build_object('id', 'descontracturante', 'name', 'Masaje descontracturante', 'price', '$30.000', 'description', 'Para aliviar dolores y contracturas musculares.'),
-    jsonb_build_object('id', 'relajante', 'name', 'Masaje relajante', 'price', '$25.000', 'description', 'Una pausa profunda para cuerpo y mente.'),
-    jsonb_build_object('id', 'deportivo', 'name', 'Masaje deportivo', 'price', '$35.000', 'description', 'Recuperación y prevención para una vida en movimiento.')
-  )
-)
-where slug = 'antonella-morselli' and public_profile = '{}'::jsonb;
-
 -- Primer negocio de barbería publicado en Induliru.
 insert into public.businesses (name, slug, public_profile)
 values (

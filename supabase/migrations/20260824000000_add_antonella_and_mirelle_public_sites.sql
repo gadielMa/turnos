@@ -1,12 +1,3 @@
--- Antonella keeps her existing business, services and agenda; only the public URL changes.
-update public.businesses
-set slug = 'antonella',
-    public_profile = coalesce(public_profile, '{}'::jsonb) || jsonb_build_object(
-      'locale', 'es-AR',
-      'slot_minutes', coalesce((public_profile->>'slot_minutes')::int, 60)
-    )
-where slug = 'antonella-morselli';
-
 -- Mirelle's page is intentionally created without services or availability.
 -- She can configure both from her administration panel before opening bookings.
 insert into public.businesses (name, slug, public_profile)

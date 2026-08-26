@@ -1,5 +1,5 @@
--- Modelo multi-negocio para poder crear cuentas de masajistas desde un panel central.
--- Mantiene los datos existentes dentro del negocio inicial de Antonella.
+-- Modelo multi-negocio para poder crear cuentas de profesionales desde un panel central.
+-- Mantiene datos históricos dentro de un negocio legado.
 
 create table if not exists public.businesses (
   id uuid primary key default gen_random_uuid(),
@@ -23,13 +23,13 @@ alter table public.profiles
   add constraint profiles_role_check check (role in ('platform_owner', 'admin', 'client'));
 
 insert into public.businesses (name, slug)
-values ('Antonella Morselli', 'antonella-morselli')
+values ('Legacy business', 'legacy-business')
 on conflict (slug) do nothing;
 
 alter table public.business_hours add column if not exists business_id uuid;
 
 update public.business_hours
-set business_id = (select id from public.businesses where slug = 'antonella-morselli')
+set business_id = (select id from public.businesses where slug = 'legacy-business')
 where business_id is null;
 
 alter table public.business_hours drop constraint if exists business_hours_pkey;
@@ -42,7 +42,7 @@ alter table public.business_hours
 alter table public.bookings add column if not exists business_id uuid;
 
 update public.bookings
-set business_id = (select id from public.businesses where slug = 'antonella-morselli')
+set business_id = (select id from public.businesses where slug = 'legacy-business')
 where business_id is null;
 
 alter table public.bookings
@@ -124,7 +124,7 @@ insert into public.business_members (business_id, user_id, role)
 select b.id, p.id, 'owner'
 from public.businesses b
 cross join public.profiles p
-where b.slug = 'antonella-morselli' and p.role = 'admin'
+where b.slug = 'legacy-business' and p.role = 'admin'
 on conflict (business_id, user_id) do nothing;
 
 alter table public.businesses enable row level security;
@@ -179,4 +179,3 @@ grant select on public.businesses, public.business_members to authenticated;
 grant insert, update, delete on public.businesses, public.business_members to authenticated;
 grant execute on function public.is_platform_owner() to authenticated;
 grant execute on function public.is_business_admin(uuid) to authenticated;
-

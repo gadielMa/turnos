@@ -1,8 +1,8 @@
-# Induliru · Plataforma de reservas para masajistas
+# Induliru · Plataforma de reservas para profesionales
 
-Aplicación web multi-negocio para que cada masajista pueda publicar sus horarios, recibir reservas online, cobrar con Mercado Pago y administrar turnos, clientes y facturación.
+Aplicación web multi-negocio para que cada profesional pueda publicar sus horarios, recibir reservas online, cobrar con Mercado Pago y administrar turnos, clientes y facturación.
 
-El proyecto comenzó como el sitio de Antonella Morselli y evolucionó hacia una plataforma donde el administrador general puede crear negocios y asignarles profesionales.
+La plataforma permite que el administrador general cree negocios y asigne profesionales.
 
 ## Estado actual
 
@@ -167,7 +167,7 @@ El frontend está hecho con HTML, CSS y JavaScript vanilla. No usa React, Vue, A
 
 - Código fuente: raíz del repositorio.
 - Publicación: GitHub Pages.
-- URL pública: `https://gadielma.github.io/masajes.antomorselli/`
+- URL pública: `https://induliru.com/turnos/`
 - Reserva pública: `/`
 - Panel de profesionales: `/admin/`
 - Panel del administrador general: `/adminadmin/`

@@ -80,7 +80,7 @@ Deno.serve(async (req) => {
       return json({ booking, preference_id: null, init_point: directPaymentLink, payment_mode: "manual_confirmation" }, 201);
     }
 
-    const siteUrl = Deno.env.get("PUBLIC_SITE_URL") || "https://gadielma.github.io/masajes.antomorselli";
+    const siteUrl = Deno.env.get("PUBLIC_SITE_URL") || "https://induliru.com";
     const turnsPath = Deno.env.get("PUBLIC_TURNS_PATH") || "";
     const bookingUrl = `${siteUrl.replace(/\/$/, "")}${turnsPath}/${business.slug}`;
     const returnDetails = new URLSearchParams({

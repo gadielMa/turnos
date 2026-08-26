@@ -1,5 +1,5 @@
 // Configuración de Google Calendar API
-// Para configurar esto, Antonella necesitará:
+// Para configurar esto, el profesional necesitará:
 // 1. Ir a https://console.cloud.google.com/
 // 2. Crear un nuevo proyecto o usar uno existente
 // 3. Habilitar Google Calendar API

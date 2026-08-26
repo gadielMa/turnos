@@ -1,6 +1,5 @@
--- Antonella Morselli requested removal from the live platform. This makes the
--- profile unavailable to the public site and administration without destroying
--- historical bookings or client data.
+-- Remove the legacy business from the live platform while preserving historical
+-- data in environments where it still exists.
 update public.businesses
 set status = 'cancelled'
-where slug in ('antonella', 'antonella-morselli');
+where slug = 'legacy-business';
