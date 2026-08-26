@@ -47,18 +47,19 @@ function applyAdminLocale() {
   const menu = document.querySelectorAll('.global-menu a');
   ['Sobre nós', 'Serviços', 'Agendamentos', 'Contato'].forEach((text, index) => { if (menu[index]) menu[index].textContent = text; });
   setText('#businessDashboard .business-welcome p', 'Gerencie seus agendamentos e horários.'); setText('businessLogoutBtn', 'Sair');
-  setText('appointmentsTab', 'Agendamentos'); setText('scheduleTab', 'Editar horários disponíveis'); setText('clientsTab', 'Clientes'); setText('billingTab', 'Faturamento');
+  setText('appointmentsTab', 'Agendamentos'); setText('scheduleTab', 'Editar horários disponíveis'); setText('servicesTab', 'Serviços'); setText('workplacesTab', 'Local de trabalho'); setText('clientsTab', 'Clientes'); setText('billingTab', 'Faturamento');
   setText('cashBookingButton', '+ Adicionar agendamento manual'); setText('appointmentsEarlyHours', 'Mostrar 00:00–06:00'); setText('scheduleEarlyHours', 'Mostrar 00:00–06:00'); setText('newScheduleButton', '+ Criar horário');
   const legend = document.querySelectorAll('.calendar-legend .legend-item'); ['Pago pelo Mercado Pago', 'Pagamento em dinheiro', 'Pendente'].forEach((text, index) => { if (legend[index]) legend[index].childNodes[1].textContent = text; });
   setText('#schedulePanel .calendar-help', 'Selecione um intervalo para criar um horário. Arraste o bloco ou suas bordas para alterá-lo. Clique em um bloco para editá-lo.');
-  setText('#schedulePanel .services-summary h3', 'Serviços'); setText('#schedulePanel .services-summary p', 'Serviços e valores que seus clientes veem ao agendar.'); setText('#serviceForm button', 'Adicionar serviço');
+  setText('#servicesPanel .services-summary h3', 'Serviços'); setText('#servicesPanel .services-summary p', 'Serviços e valores que seus clientes veem ao agendar.'); setText('#serviceForm button', 'Adicionar serviço');
   setLabel('serviceName', 'Serviço'); setLabel('servicePrice', 'Preço'); setLabel('serviceDescription', 'Descrição'); document.getElementById('serviceName').placeholder = 'Ex.: Consulta psicológica'; document.getElementById('serviceDescription').placeholder = 'Ex.: Atendimento individual de 50 minutos';
+  setText('#workplacesPanel .services-summary h3', 'Local de trabalho'); setText('#workplacesPanel .services-summary p', 'Defina onde você atende e a cor de cada horário no calendário.'); setText('#workplaceForm button', 'Adicionar local'); setLabel('workplaceName', 'Nome'); setLabel('workplaceColor', 'Cor'); document.getElementById('workplaceName').placeholder = 'Ex.: Consultório Centro'; setLabel('scheduleWorkplace', 'Local de trabalho');
   setText('#clientsPanel h2', 'Clientes'); setText('#clientsPanel > p', 'Pessoas que agendaram ou foram cadastradas manualmente neste negócio.'); setText('#clientForm button', 'Adicionar cliente');
   setLabel('clientName', 'Nome'); setLabel('clientDni', 'CPF'); setLabel('clientEmail', 'E-mail'); setLabel('clientWhatsapp', 'WhatsApp'); configureCpf(document.getElementById('clientDni'));
   document.querySelectorAll('.clients-table th').forEach((cell, index) => { cell.textContent = ['Nome', 'CPF', 'Contato', 'Ações'][index]; });
   setText('#billingPanel h2', 'Faturamento'); setText('#billingPanel > p', 'Resumo dos agendamentos pagos durante o mês selecionado.'); setLabel('billingMonth', 'Mês'); document.querySelectorAll('.billing-card small').forEach((cell, index) => { cell.textContent = ['Total faturado', 'Agendamentos pagos', 'Ticket médio'][index]; });
   document.querySelectorAll('#billingPanel h3').forEach((cell, index) => { cell.textContent = index === 0 ? 'Por tipo de atendimento' : 'Por cliente'; }); document.querySelectorAll('.billing-table thead tr').forEach((row, rowIndex) => row.querySelectorAll('th').forEach((cell, index) => { cell.textContent = rowIndex === 0 ? ['Serviço', 'Agendamentos', 'Total'][index] : ['Cliente', 'Agendamentos', 'Total'][index]; }));
-  setText('scheduleModalTitle', 'Novo horário'); setLabel('scheduleDate', 'Data inicial'); setLabel('scheduleStart', 'Das'); setLabel('scheduleEnd', 'Até'); setLabel('scheduleFrequency', 'Repetir'); setLabel('scheduleInterval', 'A cada'); setLabel('scheduleOccurrences', 'Repetições (opcional)'); setLabel('scheduleUntil', 'Repetir até (opcional)'); setText('scheduleDelete', 'Excluir'); setText('scheduleCancel', 'Cancelar'); document.querySelector('#scheduleForm button[type="submit"]').textContent = 'Salvar';
+  setText('scheduleModalTitle', 'Novo horário'); setLabel('scheduleDate', 'Data inicial'); setLabel('scheduleStart', 'Das'); setLabel('scheduleEnd', 'Até'); setLabel('scheduleWorkplace', 'Local de trabalho'); setLabel('scheduleFrequency', 'Repetir'); setLabel('scheduleInterval', 'A cada'); setLabel('scheduleOccurrences', 'Repetições (opcional)'); setLabel('scheduleUntil', 'Repetir até (opcional)'); setText('scheduleDelete', 'Excluir'); setText('scheduleCancel', 'Cancelar'); document.querySelector('#scheduleForm button[type="submit"]').textContent = 'Salvar';
   setText('#cashModal h2', 'Adicionar agendamento em dinheiro'); setLabel('cashName', 'Nome do cliente'); setLabel('cashDni', 'CPF'); configureCpf(document.getElementById('cashDni')); setLabel('cashPaymentMethod', 'Status do pagamento'); document.querySelector('#cashPaymentMethod option[value="cash"]').textContent = 'Pagamento em dinheiro'; document.querySelector('#cashPaymentMethod option[value="pending"]').textContent = 'Pendente'; setLabel('cashService', 'Serviço'); setText('cashCancel', 'Cancelar'); document.querySelector('#cashForm button[type="submit"]').textContent = 'Salvar agendamento';
   setText('#clientEditModal h2', 'Editar cliente'); setLabel('editClientName', 'Nome'); setLabel('editClientDni', 'CPF'); setLabel('editClientEmail', 'E-mail'); setLabel('editClientWhatsapp', 'WhatsApp'); configureCpf(document.getElementById('editClientDni')); setText('clientEditCancel', 'Cancelar'); document.querySelector('#clientEditForm button[type="submit"]').textContent = 'Salvar alterações';
   setText('clientConfirmTitle', 'Confirmar ação'); setText('clientConfirmCancel', 'Cancelar'); setText('clientConfirmAccept', 'Excluir'); setText('#clientEmailModal h2', 'Enviar e-mail'); setLabel('clientEmailSubject', 'Assunto'); setLabel('clientEmailMessage', 'Mensagem'); setText('clientEmailCancel', 'Cancelar'); document.querySelector('#clientEmailForm button[type="submit"]').textContent = 'Enviar e-mail'; setText('noticeTitle', 'Detalhes do agendamento'); setText('noticeClose', 'Entendi');
@@ -128,12 +129,26 @@ function ruleApplies(rule, date) {
   return current.getDate() === start.getDate() && months >= 0 && months % rule.interval_count === 0;
 }
 
+const DEFAULT_WORKPLACES = [{ id: 'office', name: 'Oficina', color: '#2563eb' }, { id: 'virtual', name: 'Virtual', color: '#7c3aed' }];
+function businessWorkplaces() {
+  const stored = currentBusiness?.public_profile?.workplaces;
+  if (!Array.isArray(stored) || !stored.length) return DEFAULT_WORKPLACES;
+  return stored.filter((place) => place?.id && place?.name && /^#[0-9a-f]{6}$/i.test(place?.color || ''));
+}
+function workplaceForRule(rule) { return businessWorkplaces().find((place) => place.id === rule?.workplace_id) || businessWorkplaces()[0] || DEFAULT_WORKPLACES[0]; }
+function renderScheduleWorkplaceOptions(selectedId) {
+  const select = document.getElementById('scheduleWorkplace');
+  select.replaceChildren();
+  businessWorkplaces().forEach((place) => select.appendChild(new Option(place.name, place.id, false, place.id === selectedId)));
+}
 function eventDataForRange(start, end) {
   return scheduleRules.flatMap((rule, index) => dateRangeDates(start, end).filter((date) => ruleApplies(rule, date)).map((date) => ({
     id: `${rule.id || 'new'}-${dateOnly(date)}`,
-    title: rule.title || 'Disponible',
+    title: `${rule.title || t('Disponible', 'Disponível')} · ${workplaceForRule(rule).name}`,
     start: `${dateOnly(date)}T${rule.start_time.slice(0, 5)}:00`,
     end: `${dateOnly(date)}T${rule.end_time.slice(0, 5)}:00`,
+    backgroundColor: workplaceForRule(rule).color,
+    borderColor: workplaceForRule(rule).color,
     extendedProps: { ruleIndex: index },
   })));
 }
@@ -358,6 +373,20 @@ function renderBusinessServices() {
     container.appendChild(card);
   });
 }
+function renderBusinessWorkplaces() {
+  const container = document.getElementById('businessWorkplaces');
+  if (!container) return;
+  container.replaceChildren();
+  businessWorkplaces().forEach((place) => {
+    const card = document.createElement('article'); card.className = 'service-summary-card workplace-summary-card';
+    const swatch = document.createElement('i'); swatch.style.background = place.color; swatch.setAttribute('aria-hidden', 'true');
+    const name = document.createElement('strong'); name.textContent = place.name;
+    const controls = document.createElement('span');
+    const edit = document.createElement('button'); edit.type = 'button'; edit.dataset.workplaceEdit = place.id; edit.textContent = t('Editar', 'Editar');
+    const remove = document.createElement('button'); remove.type = 'button'; remove.dataset.workplaceDelete = place.id; remove.textContent = t('Eliminar', 'Excluir');
+    controls.append(edit, remove); card.append(swatch, name, controls); container.appendChild(card);
+  });
+}
 function serviceIdFromName(name) {
   return name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
@@ -372,6 +401,17 @@ async function saveBusinessServices(services) {
   if (!response.ok) throw new Error(result.error || 'No se pudieron guardar los servicios');
   currentBusiness.public_profile = { ...(currentBusiness.public_profile || {}), services };
   renderBusinessServices();
+}
+async function saveBusinessWorkplaces(workplaces) {
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const response = await fetch(supabaseFunctionUrl('update-business-workplaces'), {
+    method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SUPABASE_CONFIG.ANON_KEY, Authorization: `Bearer ${sessionData.session?.access_token || ''}` },
+    body: JSON.stringify({ business_id: currentBusiness.id, workplaces }),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || t('No se pudieron guardar los lugares.', 'Não foi possível salvar os locais.'));
+  currentBusiness.public_profile = { ...(currentBusiness.public_profile || {}), workplaces };
+  renderBusinessWorkplaces(); refreshCalendar();
 }
 function ensureBillingMonths() {
   const select = document.getElementById('billingMonth');
@@ -416,6 +456,7 @@ function openScheduleModal({ ruleIndex = null, date, start = '14:00', end = '15:
   document.getElementById('scheduleDate').value = rule?.start_date || date;
   document.getElementById('scheduleStart').value = (rule?.start_time || start).slice(0, 5);
   document.getElementById('scheduleEnd').value = (rule?.end_time || end).slice(0, 5);
+  renderScheduleWorkplaceOptions(rule?.workplace_id || businessWorkplaces()[0]?.id);
   document.getElementById('scheduleFrequency').value = rule?.frequency || 'once';
   document.getElementById('scheduleInterval').value = rule?.interval_count || 1;
   document.getElementById('scheduleOccurrences').value = rule?.occurrences || '';
@@ -437,6 +478,7 @@ async function loadBusinessDashboard(user, allowPlatformOwner = platformOwnerBus
   applyAdminLocale();
   document.getElementById('businessTitle').textContent = business.name;
   renderBusinessServices();
+  renderBusinessWorkplaces();
   populateCashServices();
   businessDashboard.style.display = 'block';
   let { data: rules, error: rulesError } = await supabaseClient.from('availability_rules').select('*').eq('business_id', business.id).order('start_date');
@@ -560,16 +602,17 @@ document.getElementById('dashboard').addEventListener('click', (event) => {
   showPlatformPanel(tab.id === 'reviewBusinessesTab' ? 'reviewBusinessesPanel' : 'createBusinessPanel', tab.id);
 });
 
-document.getElementById('appointmentsTab').addEventListener('click', () => {
-  document.getElementById('appointmentsTab').classList.add('active'); document.getElementById('scheduleTab').classList.remove('active');
-  document.getElementById('clientsTab').classList.remove('active'); document.getElementById('billingTab').classList.remove('active'); document.getElementById('appointmentsPanel').classList.add('active'); document.getElementById('schedulePanel').classList.remove('active'); document.getElementById('clientsPanel').classList.remove('active'); document.getElementById('billingPanel').classList.remove('active');
-  appointmentsCalendar?.updateSize();
-});
-document.getElementById('scheduleTab').addEventListener('click', () => {
-  document.getElementById('scheduleTab').classList.add('active'); document.getElementById('appointmentsTab').classList.remove('active'); document.getElementById('clientsTab').classList.remove('active'); document.getElementById('billingTab').classList.remove('active');
-  document.getElementById('schedulePanel').classList.add('active'); document.getElementById('appointmentsPanel').classList.remove('active'); document.getElementById('clientsPanel').classList.remove('active'); document.getElementById('billingPanel').classList.remove('active');
-  scheduleCalendar?.updateSize();
-});
+const businessTabPanels = { appointments: ['appointmentsTab', 'appointmentsPanel'], schedule: ['scheduleTab', 'schedulePanel'], services: ['servicesTab', 'servicesPanel'], workplaces: ['workplacesTab', 'workplacesPanel'], clients: ['clientsTab', 'clientsPanel'], billing: ['billingTab', 'billingPanel'] };
+function showBusinessPanel(name) {
+  Object.entries(businessTabPanels).forEach(([key, [tabId, panelId]]) => {
+    document.getElementById(tabId).classList.toggle('active', key === name);
+    document.getElementById(panelId).classList.toggle('active', key === name);
+  });
+  if (name === 'appointments') appointmentsCalendar?.updateSize();
+  if (name === 'schedule') scheduleCalendar?.updateSize();
+  if (name === 'billing') { ensureBillingMonths(); loadBilling().catch((error) => showMessage(document.getElementById('appointmentsMessage'), error.message, 'error')); }
+}
+Object.entries(businessTabPanels).forEach(([name, [tabId]]) => document.getElementById(tabId).addEventListener('click', () => showBusinessPanel(name)));
 document.getElementById('newScheduleButton').addEventListener('click', () => openScheduleModal({ date: dateOnly(new Date()), start: '14:00', end: '15:00' }));
 document.getElementById('serviceForm').addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -594,15 +637,30 @@ document.getElementById('businessServices').addEventListener('click', async (eve
   try { await saveBusinessServices(services); showMessage(document.getElementById('servicesMessage'), t('Servicio eliminado.', 'Serviço excluído.'), 'success'); }
   catch (error) { showMessage(document.getElementById('servicesMessage'), error.message, 'error'); }
 });
-document.getElementById('clientsTab').addEventListener('click', () => {
-  document.getElementById('clientsTab').classList.add('active'); document.getElementById('appointmentsTab').classList.remove('active'); document.getElementById('scheduleTab').classList.remove('active'); document.getElementById('billingTab').classList.remove('active');
-  document.getElementById('clientsPanel').classList.add('active'); document.getElementById('appointmentsPanel').classList.remove('active'); document.getElementById('schedulePanel').classList.remove('active'); document.getElementById('billingPanel').classList.remove('active');
+document.getElementById('workplaceForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const message = document.getElementById('workplacesMessage'); const name = document.getElementById('workplaceName').value.trim(); const color = document.getElementById('workplaceColor').value;
+  const id = serviceIdFromName(name);
+  if (!id || !/^#[0-9a-f]{6}$/i.test(color)) return showMessage(message, t('Completá un nombre y color válido.', 'Preencha um nome e uma cor válida.'), 'error');
+  const workplaces = businessWorkplaces();
+  if (workplaces.some((place) => place.id === id)) return showMessage(message, t('Ya existe un lugar con ese nombre.', 'Já existe um local com esse nome.'), 'error');
+  try { await saveBusinessWorkplaces([...workplaces, { id, name, color }]); event.target.reset(); document.getElementById('workplaceColor').value = '#2563eb'; showMessage(message, t('Lugar agregado.', 'Local adicionado.'), 'success'); }
+  catch (error) { showMessage(message, error.message, 'error'); }
 });
-document.getElementById('billingTab').addEventListener('click', async () => {
-  document.getElementById('billingTab').classList.add('active'); document.getElementById('appointmentsTab').classList.remove('active'); document.getElementById('scheduleTab').classList.remove('active'); document.getElementById('clientsTab').classList.remove('active');
-  document.getElementById('billingPanel').classList.add('active'); document.getElementById('appointmentsPanel').classList.remove('active'); document.getElementById('schedulePanel').classList.remove('active'); document.getElementById('clientsPanel').classList.remove('active');
-  ensureBillingMonths();
-  try { await loadBilling(); } catch (error) { showMessage(document.getElementById('appointmentsMessage'), error.message, 'error'); }
+document.getElementById('businessWorkplaces').addEventListener('click', async (event) => {
+  const edit = event.target.closest('button[data-workplace-edit]'); const remove = event.target.closest('button[data-workplace-delete]');
+  if (!edit && !remove) return;
+  const workplaces = businessWorkplaces(); const id = (edit || remove).dataset.workplaceEdit || (edit || remove).dataset.workplaceDelete;
+  if (edit) {
+    const place = workplaces.find((item) => item.id === id); const name = window.prompt(t('Nombre del lugar', 'Nome do local'), place?.name || '');
+    if (!name?.trim()) return;
+    const color = window.prompt(t('Color hexadecimal, por ejemplo #2563eb', 'Cor hexadecimal, por exemplo #2563eb'), place?.color || '#2563eb');
+    if (!/^#[0-9a-f]{6}$/i.test(color || '')) return showMessage(document.getElementById('workplacesMessage'), t('El color debe tener formato #RRGGBB.', 'A cor deve ter o formato #RRGGBB.'), 'error');
+    try { await saveBusinessWorkplaces(workplaces.map((item) => item.id === id ? { ...item, name: name.trim(), color } : item)); showMessage(document.getElementById('workplacesMessage'), t('Lugar actualizado.', 'Local atualizado.'), 'success'); } catch (error) { showMessage(document.getElementById('workplacesMessage'), error.message, 'error'); }
+    return;
+  }
+  if (workplaces.length <= 1) return showMessage(document.getElementById('workplacesMessage'), t('Debe quedar al menos un lugar de trabajo.', 'Deve permanecer pelo menos um local de trabalho.'), 'error');
+  try { await saveBusinessWorkplaces(workplaces.filter((item) => item.id !== id)); showMessage(document.getElementById('workplacesMessage'), t('Lugar eliminado. Los horarios existentes usarán el primer lugar disponible.', 'Local excluído. Os horários existentes usarão o primeiro local disponível.'), 'success'); } catch (error) { showMessage(document.getElementById('workplacesMessage'), error.message, 'error'); }
 });
 document.getElementById('billingMonth').addEventListener('change', () => loadBilling());
 
@@ -757,7 +815,7 @@ document.getElementById('scheduleForm').addEventListener('submit', (event) => {
   event.preventDefault();
   const date = document.getElementById('scheduleDate').value;
   const frequency = document.getElementById('scheduleFrequency').value;
-  const rule = { ...(editingRuleIndex === null ? {} : scheduleRules[editingRuleIndex]), business_id: currentBusiness.id, title: 'Disponible', start_date: date, start_time: `${document.getElementById('scheduleStart').value}:00`, end_time: `${document.getElementById('scheduleEnd').value}:00`, frequency, interval_count: Number(document.getElementById('scheduleInterval').value) || 1, occurrences: Number(document.getElementById('scheduleOccurrences').value) || null, until_date: document.getElementById('scheduleUntil').value || null, weekdays: frequency === 'weekly' ? [parseDate(date).getDay()] : [], active: true };
+  const rule = { ...(editingRuleIndex === null ? {} : scheduleRules[editingRuleIndex]), business_id: currentBusiness.id, title: t('Disponible', 'Disponível'), workplace_id: document.getElementById('scheduleWorkplace').value || businessWorkplaces()[0]?.id || 'office', start_date: date, start_time: `${document.getElementById('scheduleStart').value}:00`, end_time: `${document.getElementById('scheduleEnd').value}:00`, frequency, interval_count: Number(document.getElementById('scheduleInterval').value) || 1, occurrences: Number(document.getElementById('scheduleOccurrences').value) || null, until_date: document.getElementById('scheduleUntil').value || null, weekdays: frequency === 'weekly' ? [parseDate(date).getDay()] : [], active: true };
   if (rule.start_time >= rule.end_time) return showNotice('Revisá el horario', [['Detalle', 'La hora de inicio debe ser anterior a la hora de fin.']]);
   if (editingRuleIndex === null) scheduleRules.push(rule); else scheduleRules[editingRuleIndex] = rule;
   closeScheduleModal(); refreshCalendar();
