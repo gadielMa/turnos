@@ -29,7 +29,10 @@ function adminLocale() { return isPortugueseAdmin() ? 'pt-BR' : 'es-AR'; }
 function t(es, pt) { return isPortugueseAdmin() ? pt : es; }
 function argentinaHoliday(date) { return isPortugueseAdmin() ? null : (ARGENTINA_HOLIDAYS_2026[dateOnly(date)] || null); }
 function calendarButtonText() { return isPortugueseAdmin() ? { today: 'Hoje', month: 'Mês', week: 'Semana', day: 'Dia', list: 'Lista' } : { today: 'Hoy', month: 'Mes', week: 'Semana', day: 'Día', list: 'Lista' }; }
-function setText(selector, value) { const element = document.querySelector(selector); if (element) element.textContent = value; }
+function setText(selector, value) {
+  const element = /^[#.[\s]/.test(selector) ? document.querySelector(selector) : (document.getElementById(selector) || document.querySelector(selector));
+  if (element) element.textContent = value;
+}
 function setLabel(inputId, value) { const input = document.getElementById(inputId); const label = input?.closest('label'); if (label?.firstChild) label.firstChild.textContent = value; }
 function configureCpf(input) {
   if (!input) return;
@@ -46,7 +49,8 @@ function applyAdminLocale() {
   document.documentElement.lang = 'pt-BR';
   const menu = document.querySelectorAll('.global-menu a');
   ['Sobre nós', 'Serviços', 'Agendamentos', 'Contato'].forEach((text, index) => { if (menu[index]) menu[index].textContent = text; });
-  setText('#businessDashboard .business-welcome p', 'Gerencie seus agendamentos e horários.'); setText('businessLogoutBtn', 'Sair');
+  setText('#loginView h1', 'Painel de administração'); setText('#loginView > p', 'Entre com sua conta de administração.'); setLabel('loginEmail', 'E-mail'); setLabel('loginPassword', 'Senha'); document.querySelector('#loginForm button[type="submit"]').textContent = 'Entrar';
+  setText('businessWelcomeLabel', 'Bem-vinda, '); setText('#businessDashboard .business-welcome p', 'Gerencie seus agendamentos e horários.'); setText('businessLogoutBtn', 'Sair');
   setText('appointmentsTab', 'Agendamentos'); setText('scheduleTab', 'Editar horários disponíveis'); setText('servicesTab', 'Serviços'); setText('workplacesTab', 'Local de trabalho'); setText('clientsTab', 'Clientes'); setText('billingTab', 'Faturamento');
   setText('cashBookingButton', '+ Adicionar agendamento manual'); setText('appointmentsEarlyHours', 'Mostrar 00:00–06:00'); setText('scheduleEarlyHours', 'Mostrar 00:00–06:00'); setText('newScheduleButton', '+ Criar horário');
   const legend = document.querySelectorAll('.calendar-legend .legend-item'); ['Pago pelo Mercado Pago', 'Pagamento em dinheiro', 'Pendente'].forEach((text, index) => { if (legend[index]) legend[index].childNodes[1].textContent = text; });
@@ -166,6 +170,11 @@ function calendarDensity() {
     ? { dayHeaderFormat: { weekday: 'narrow', day: 'numeric' }, slotDuration: '00:30:00' }
     : { dayHeaderFormat: { weekday: 'short', day: 'numeric', month: 'numeric' }, slotDuration: '00:15:00' };
 }
+function compactDayHeader(info) {
+  if (!window.matchMedia('(max-width: 720px)').matches) return undefined;
+  const labels = isPortugueseAdmin() ? ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'] : ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+  return { html: `<span>${labels[info.date.getDay()]}</span><small>${info.date.getDate()}</small>` };
+}
 
 async function loadAppointmentsCalendar() {
   // Al actualizar un pago conservamos exactamente la semana y vista elegidas.
@@ -195,7 +204,7 @@ async function loadAppointmentsCalendar() {
     initialView: preservedView || 'timeGridWeek', initialDate: preservedDate || new Date(), locale: isPortugueseAdmin() ? 'pt-br' : 'es', firstDay: 1, allDaySlot: false,
     buttonText: calendarButtonText(),
     slotMinTime: '06:00:00', slotMaxTime: '24:00:00', slotLabelInterval: '01:00:00', height: 'auto',
-    headerToolbar: calendarToolbar(), events, ...calendarDensity(),
+    headerToolbar: calendarToolbar(), dayHeaderContent: compactDayHeader, events, ...calendarDensity(),
     eventClick: (info) => {
       const booking = info.event.extendedProps.booking;
       const details = [[t('Cliente', 'Cliente'), booking.name], [t('Servicio', 'Serviço'), serviceNames[booking.service] || booking.service], [t('Fecha y hora', 'Data e horário'), `${booking.booking_date} · ${booking.booking_time.slice(0, 5)}`], [t('Estado', 'Status'), booking.status === 'confirmed' ? t('Confirmado', 'Confirmado') : t('Pendiente de confirmación', 'Pendente de confirmação')]];
@@ -489,7 +498,7 @@ async function loadBusinessDashboard(user, allowPlatformOwner = platformOwnerBus
     initialView: 'timeGridWeek', initialDate: new Date(), locale: isPortugueseAdmin() ? 'pt-br' : 'es', firstDay: 1, allDaySlot: false,
     buttonText: calendarButtonText(),
     slotMinTime: '06:00:00', slotMaxTime: '24:00:00', snapDuration: '00:15:00', slotLabelInterval: '01:00:00', height: 'auto', editable: true, selectable: true,
-    headerToolbar: calendarToolbar(), ...calendarDensity(),
+    headerToolbar: calendarToolbar(), dayHeaderContent: compactDayHeader, ...calendarDensity(),
     events: (info, success) => success(eventDataForRange(info.start, info.end)),
     dayCellClassNames: (info) => {
       const classes = [];
