@@ -10,7 +10,6 @@ values (
     'location', 'Av. Francisco Beiró 3268 · Villa del Parque, CABA',
     'accent', '#c51f24',
     'slot_minutes', 30,
-    'booking_without_payment', true,
     'contact_whatsapp', '5491166046476',
     'contact_email', 'miro@induliru.com',
     'services', jsonb_build_array(jsonb_build_object(
