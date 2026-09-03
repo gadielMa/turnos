@@ -408,6 +408,9 @@
   <div id="noticeModal" class="schedule-modal" role="dialog" aria-modal="true" aria-labelledby="noticeTitle">
     <div class="client-dialog notice-dialog"><h2 id="noticeTitle">Detalle del turno</h2><div id="noticeBody" class="notice-body"></div><div id="noticeActions" class="client-dialog-actions"><button id="noticeClose" class="client-primary" type="button">Entendido</button></div></div>
   </div>
+  <div id="repeatModal" class="schedule-modal" role="dialog" aria-modal="true" aria-labelledby="repeatTitle">
+    <form id="repeatForm" class="client-dialog"><h2 id="repeatTitle">Repetir turno</h2><p id="repeatSummary"></p><div class="admin-form"><label>Frecuencia<select id="repeatFrequency"><option value="1">Todas las semanas</option><option value="2">Cada 2 semanas</option><option value="month">Una vez al mes</option><option value="custom">Personalizado</option></select></label><label id="repeatCustomWrap" style="display:none">Cada cuántas semanas<input id="repeatCustomWeeks" type="number" min="1" max="52" value="3"></label><label>Cantidad de turnos<input id="repeatCount" type="number" min="1" max="52" value="4" required></label></div><p class="edit-client-notice">Los turnos pagos se crearán como pendientes para que cada pago pueda controlarse por separado.</p><div class="client-dialog-actions"><button id="repeatCancel" class="client-secondary" type="button">Cancelar</button><button class="client-primary" type="submit">Crear repeticiones</button></div></form>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
   <script src="supabase-config.js"></script>

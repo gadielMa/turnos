@@ -14,6 +14,7 @@ let editingClientId = null;
 let pendingClientDeleteId = null;
 let emailClientId = null;
 let cashDateCalendar = null;
+let repeatingBooking = null;
 const earlyHoursVisible = { appointments: false, schedule: false };
 const ARGENTINA_HOLIDAYS_2026 = {
   '2026-01-01': 'Año Nuevo', '2026-02-16': 'Carnaval', '2026-02-17': 'Carnaval',
@@ -182,7 +183,7 @@ async function loadAppointmentsCalendar() {
   const preservedView = appointmentsCalendar?.view.type;
   const { data: bookings, error } = await supabaseClient
     .from('bookings')
-    .select('id, name, service, booking_date, booking_time, status, payment_method')
+    .select('id, name, dni, service, booking_date, booking_time, status, payment_method')
     .eq('business_id', currentBusiness.id)
     .in('status', ['pending', 'confirmed', 'cancelled'])
     .order('booking_date').order('booking_time');
@@ -208,7 +209,7 @@ async function loadAppointmentsCalendar() {
     eventClick: (info) => {
       const booking = info.event.extendedProps.booking;
       const details = [[t('Cliente', 'Cliente'), booking.name], [t('Servicio', 'Serviço'), serviceNames[booking.service] || booking.service], [t('Fecha y hora', 'Data e horário'), `${booking.booking_date} · ${booking.booking_time.slice(0, 5)}`], [t('Estado', 'Status'), booking.status === 'confirmed' ? t('Confirmado', 'Confirmado') : t('Pendiente de confirmación', 'Pendente de confirmação')]];
-      const actions = booking.status === 'pending' ? [{
+      const actions = [{ label: t('Repetir turno', 'Repetir horário'), onClick: () => openRepeatModal(booking) }, ...(booking.status === 'pending' ? [{
         label: t('Confirmar pago de Mercado Pago', 'Confirmar pagamento do Mercado Pago'),
         onClick: async (event) => {
           const button = event.currentTarget;
@@ -224,12 +225,41 @@ async function loadAppointmentsCalendar() {
           await loadAppointmentsCalendar();
           if (document.getElementById('billingPanel').classList.contains('active')) await loadBilling();
         },
-      }] : [];
+      }] : [])];
       showNotice(t('Detalle del turno', 'Detalhes do agendamento'), details, actions);
     },
   });
   appointmentsCalendar.render();
 }
+
+function openRepeatModal(booking) {
+  repeatingBooking = booking;
+  document.getElementById('repeatSummary').textContent = `${booking.name} · ${booking.booking_date} · ${booking.booking_time.slice(0, 5)}`;
+  document.getElementById('repeatModal').classList.add('open');
+}
+document.getElementById('repeatCancel').addEventListener('click', () => { document.getElementById('repeatModal').classList.remove('open'); repeatingBooking = null; });
+document.getElementById('repeatFrequency').addEventListener('change', (event) => { document.getElementById('repeatCustomWrap').style.display = event.target.value === 'custom' ? 'grid' : 'none'; });
+document.getElementById('repeatForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!repeatingBooking) return;
+  const frequency = document.getElementById('repeatFrequency').value;
+  const count = Math.min(52, Math.max(1, Number(document.getElementById('repeatCount').value) || 1));
+  const intervalWeeks = frequency === 'month' ? 4 : frequency === 'custom' ? Math.min(52, Math.max(1, Number(document.getElementById('repeatCustomWeeks').value) || 1)) : Number(frequency);
+  const dates = [];
+  for (let index = 1; index <= count; index += 1) {
+    const next = parseDate(repeatingBooking.booking_date);
+    if (frequency === 'month') next.setMonth(next.getMonth() + index);
+    else next.setDate(next.getDate() + (intervalWeeks * 7 * index));
+    dates.push(dateOnly(next));
+  }
+  const paidBooking = repeatingBooking.payment_method === 'mercadopago';
+  const rows = dates.map((date) => ({ business_id: currentBusiness.id, name: repeatingBooking.name, dni: repeatingBooking.dni, service: repeatingBooking.service, booking_date: date, booking_time: repeatingBooking.booking_time, duration_minutes: bookingDurationMinutes(), status: paidBooking ? 'pending' : 'confirmed', payment_method: paidBooking ? 'pending' : (repeatingBooking.payment_method || 'cash') }));
+  const { error } = await supabaseClient.from('bookings').insert(rows);
+  if (error) return showMessage(document.getElementById('clientsMessage'), error.message, 'error');
+  document.getElementById('repeatModal').classList.remove('open'); repeatingBooking = null;
+  await loadAppointmentsCalendar();
+  showClientNotice(t('Repeticiones creadas', 'Repetições criadas'), t(`${count} turnos fueron agregados a la agenda.`, `${count} horários foram adicionados à agenda.`));
+});
 
 async function loadClients() {
   const { data, error } = await supabaseClient.from('clients').select('id, name, dni, email, whatsapp').eq('business_id', currentBusiness.id).is('deleted_at', null).order('name');
