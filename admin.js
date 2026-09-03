@@ -232,7 +232,7 @@ async function loadAppointmentsCalendar() {
 }
 
 async function loadClients() {
-  const { data, error } = await supabaseClient.from('clients').select('id, name, dni, email, whatsapp').eq('business_id', currentBusiness.id).order('name');
+  const { data, error } = await supabaseClient.from('clients').select('id, name, dni, email, whatsapp').eq('business_id', currentBusiness.id).is('deleted_at', null).order('name');
   if (error) throw error;
   const list = document.getElementById('clientsList');
   list.replaceChildren();
@@ -681,7 +681,7 @@ document.getElementById('clientForm').addEventListener('submit', async (event) =
   const whatsapp = document.getElementById('clientWhatsapp').value.trim() || null;
   const message = document.getElementById('clientsMessage');
   if (!(isPortugueseAdmin() ? /^\d{11}$/.test(dni) : /^\d{7,8}$/.test(dni))) return showMessage(message, t('El DNI debe tener 7 u 8 dígitos.', 'O CPF deve ter 11 dígitos.'), 'error');
-  const { error } = await supabaseClient.from('clients').upsert({ business_id: currentBusiness.id, name, dni, email, whatsapp }, { onConflict: 'business_id,dni' });
+  const { error } = await supabaseClient.from('clients').upsert({ business_id: currentBusiness.id, name, dni, email, whatsapp, deleted_at: null }, { onConflict: 'business_id,dni' });
   if (error) return showMessage(message, error.message, 'error');
   showMessage(message, 'Cliente guardado correctamente.', 'success');
   event.target.reset();
@@ -699,7 +699,7 @@ function showClientNotice(title, text) {
 function showClientDeleteConfirm(id, name) {
   pendingClientDeleteId = id;
   document.getElementById('clientConfirmTitle').textContent = t('Eliminar cliente', 'Excluir cliente');
-  document.getElementById('clientConfirmText').textContent = isPortugueseAdmin() ? `Deseja excluir ${name} da lista? Os agendamentos não serão apagados.` : `¿Querés eliminar a ${name} de la lista? Sus reservas no se borrarán.`;
+  document.getElementById('clientConfirmText').textContent = isPortugueseAdmin() ? `Deseja ocultar ${name} da lista? Os agendamentos e pagamentos não serão apagados.` : `¿Querés ocultar a ${name} de la lista? Sus turnos y pagos no se borrarán.`;
   document.getElementById('clientConfirmAccept').style.display = 'inline-block';
   document.getElementById('clientConfirmCancel').textContent = t('Cancelar', 'Cancelar');
   document.getElementById('clientConfirmModal').classList.add('open');
@@ -708,7 +708,7 @@ function showClientDeleteConfirm(id, name) {
 document.getElementById('clientConfirmCancel').addEventListener('click', closeClientConfirm);
 document.getElementById('clientConfirmAccept').addEventListener('click', async () => {
   if (!pendingClientDeleteId) return;
-  const { error } = await supabaseClient.from('clients').delete().eq('id', pendingClientDeleteId).eq('business_id', currentBusiness.id);
+  const { error } = await supabaseClient.from('clients').update({ deleted_at: new Date().toISOString() }).eq('id', pendingClientDeleteId).eq('business_id', currentBusiness.id);
   closeClientConfirm();
   if (error) return showMessage(document.getElementById('clientsMessage'), error.message, 'error');
   await loadClients();
@@ -729,9 +729,6 @@ document.getElementById('clientsList').addEventListener('click', async (event) =
     return;
   }
   if (button.dataset.action === 'delete') {
-    const { data: bookings, error } = await supabaseClient.from('bookings').select('id').eq('business_id', currentBusiness.id).eq('dni', button.dataset.dni).limit(1);
-    if (error) return showMessage(document.getElementById('clientsMessage'), error.message, 'error');
-    if (bookings?.length) return showClientNotice('Cliente con reservas', 'No se puede eliminar este cliente porque tiene turnos asociados. Las reservas deben seguir siendo consultables por DNI.');
     return showClientDeleteConfirm(id, button.dataset.name);
   } else {
     editingClientId = id;
@@ -812,7 +809,7 @@ document.getElementById('cashForm').addEventListener('submit', async (event) => 
     payment_method: document.getElementById('cashPaymentMethod').value,
   });
   if (error) return showNotice('No se pudo guardar el turno', [['Detalle', error.code === '23505' ? 'Ese horario ya está ocupado.' : error.message]]);
-  await supabaseClient.from('clients').upsert({ business_id: currentBusiness.id, name: document.getElementById('cashName').value.trim(), dni: cashDni }, { onConflict: 'business_id,dni' });
+  await supabaseClient.from('clients').upsert({ business_id: currentBusiness.id, name: document.getElementById('cashName').value.trim(), dni: cashDni, deleted_at: null }, { onConflict: 'business_id,dni' });
   document.getElementById('cashModal').classList.remove('open');
   document.getElementById('cashForm').reset();
   await loadAppointmentsCalendar();
