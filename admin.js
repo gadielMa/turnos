@@ -185,7 +185,7 @@ async function loadAppointmentsCalendar() {
     .from('bookings')
     .select('id, name, dni, service, booking_date, booking_time, status, payment_method')
     .eq('business_id', currentBusiness.id)
-    .in('status', ['pending', 'confirmed', 'cancelled'])
+    .in('status', ['pending', 'confirmed'])
     .order('booking_date').order('booking_time');
   if (error) throw error;
 
@@ -209,7 +209,12 @@ async function loadAppointmentsCalendar() {
     eventClick: (info) => {
       const booking = info.event.extendedProps.booking;
       const details = [[t('Cliente', 'Cliente'), booking.name], [t('Servicio', 'Serviço'), serviceNames[booking.service] || booking.service], [t('Fecha y hora', 'Data e horário'), `${booking.booking_date} · ${booking.booking_time.slice(0, 5)}`], [t('Estado', 'Status'), booking.status === 'confirmed' ? t('Confirmado', 'Confirmado') : t('Pendiente de confirmación', 'Pendente de confirmação')]];
-      const actions = [{ label: t('Repetir turno', 'Repetir horário'), onClick: () => openRepeatModal(booking) }, ...(booking.status === 'pending' ? [{
+      const actions = [{ label: t('Repetir turno', 'Repetir horário'), onClick: () => openRepeatModal(booking) }, { label: t('Eliminar turno', 'Excluir horário'), onClick: async () => {
+        if (!window.confirm(t(`¿Eliminar el turno de ${booking.name}? Quedará cancelado y no se borrará del historial.`, `Excluir o horário de ${booking.name}? Ele ficará cancelado no histórico.`))) return;
+        const { error: cancelError } = await supabaseClient.from('bookings').update({ status: 'cancelled' }).eq('id', booking.id).eq('business_id', currentBusiness.id);
+        if (cancelError) return showNotice(t('No se pudo eliminar', 'Não foi possível excluir'), [[t('Detalle', 'Detalhe'), cancelError.message]]);
+        closeNotice(); await loadAppointmentsCalendar();
+      } }, ...(booking.status === 'pending' ? [{
         label: t('Confirmar pago de Mercado Pago', 'Confirmar pagamento do Mercado Pago'),
         onClick: async (event) => {
           const button = event.currentTarget;
