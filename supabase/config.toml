@@ -26,3 +26,12 @@ verify_jwt = false
 
 [functions.create-business-admin]
 verify_jwt = true
+
+[functions.soypobre-feed]
+verify_jwt = true
+
+[functions.soypobre-donation]
+verify_jwt = true
+
+[functions.soypobre-ranking]
+verify_jwt = true
