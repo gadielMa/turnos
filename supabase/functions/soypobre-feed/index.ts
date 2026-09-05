@@ -40,6 +40,7 @@ Deno.serve(async (req) => {
     }));
     return json({ profiles });
   } catch (error) {
-    return json({ error: error instanceof Error ? error.message : "No pudimos cargar las historias." }, 500);
+    const message = error instanceof Error ? error.message : (typeof error === "object" && error && "message" in error ? String(error.message) : "");
+    return json({ error: message || "No pudimos cargar las historias." }, 500);
   }
 });

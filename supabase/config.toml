@@ -35,3 +35,6 @@ verify_jwt = true
 
 [functions.soypobre-ranking]
 verify_jwt = true
+
+[functions.soypobre-donor-profile]
+verify_jwt = true
