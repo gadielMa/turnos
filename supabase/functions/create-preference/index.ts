@@ -38,7 +38,11 @@ Deno.serve(async (req) => {
     const price = configuredReservationAmount > 0
       ? configuredReservationAmount
       : (configuredTestAmount > 0 ? configuredTestAmount : Number(selectedService.price));
-    if (!(await isValidSlot(supabase, date, time, business.id))) {
+    // The public calendar and the checkout must validate against the same
+    // duration. Brian publishes 30-minute slots; relying on isValidSlot's
+    // 60-minute default made times such as 17:30 appear selectable and then
+    // fail only after the customer submitted the form.
+    if (!(await isValidSlot(supabase, date, time, business.id, bookingDuration))) {
       return json({ error: "Ese horario no está disponible para reservas" }, 400);
     }
 
@@ -140,6 +144,9 @@ Deno.serve(async (req) => {
     }, 201);
   } catch (error) {
     console.error("create-preference error", error);
-    return json({ error: error instanceof Error ? error.message : "Error interno" }, 500);
+    const message = error instanceof Error
+      ? error.message
+      : (typeof error === "object" && error && "message" in error ? String(error.message) : "");
+    return json({ error: message || "No se pudo iniciar el pago. Intentá nuevamente." }, 500);
   }
 });
