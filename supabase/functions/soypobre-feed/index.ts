@@ -18,19 +18,12 @@ Deno.serve(async (req) => {
   if (!await donorFromRequest(req)) return json({ error: "Confirmá tu email y completá todos los datos de donante." }, 403);
 
   try {
-    const url = new URL(req.url);
-    const country = url.searchParams.get("country") || "Argentina";
-    const province = url.searchParams.get("province");
-    const locality = url.searchParams.get("locality");
     const supabase = adminClient();
     let query = supabase
       .from("soypobre_requests")
-      .select("id, name, alias, cbu, story, photo_path, photo_url, photo_status, country, province, locality, created_at")
-      .eq("country", country)
+      .select("id, name, alias, cbu, story, photo_path, photo_url, photo_status, created_at")
       .order("created_at", { ascending: false })
       .limit(60);
-    if (province) query = query.eq("province", province);
-    if (locality) query = query.eq("locality", locality);
     const { data, error } = await query;
     if (error) throw error;
     const profiles = await Promise.all((data || []).map(async (profile) => {
