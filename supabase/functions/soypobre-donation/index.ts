@@ -17,10 +17,10 @@ Deno.serve(async (req) => {
   if (!user) return json({ error: "Iniciá sesión como donante" }, 401);
 
   try {
-    const { recipient_id, amount, receipt_url, receipt_public_id } = await req.json();
+    const { recipient_id, amount } = await req.json();
     const parsedAmount = Number(amount);
-    if (!recipient_id || !Number.isFinite(parsedAmount) || parsedAmount <= 0 || !receipt_url) {
-      return json({ error: "Completá el monto y cargá el comprobante." }, 400);
+    if (!recipient_id || !Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+      return json({ error: "Completá el monto transferido." }, 400);
     }
     const metadata = user.user_metadata || {};
     const supabase = adminClient();
@@ -37,8 +37,6 @@ Deno.serve(async (req) => {
       donor_user_id: user.id,
       recipient_id,
       amount: parsedAmount,
-      receipt_url,
-      receipt_public_id: receipt_public_id || null,
       status: "reported",
     }).select("id, amount, created_at").single();
     if (error) throw error;
