@@ -57,7 +57,6 @@ Deno.serve(async (req) => {
       business_id: business.id,
       name: String(name).trim(),
       dni: String(dni),
-      deleted_at: null,
       service,
       booking_date: date,
       booking_time: `${time}:00`,
