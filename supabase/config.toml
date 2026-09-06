@@ -38,3 +38,6 @@ verify_jwt = true
 
 [functions.soypobre-donor-profile]
 verify_jwt = true
+
+[functions.soypobre-my-donations]
+verify_jwt = true
