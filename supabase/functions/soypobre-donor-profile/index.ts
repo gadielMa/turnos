@@ -5,7 +5,7 @@ async function donorFromRequest(req: Request) {
   const token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!token) return null;
   const { data, error } = await adminClient().auth.getUser(token);
-  if (error || !data.user?.user_metadata?.soypobre_donor_name) return null;
+  if (error || !data.user?.email_confirmed_at) return null;
   return data.user;
 }
 
@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
   if (options) return options;
   if (req.method !== "POST") return json({ error: "Método no permitido" }, 405);
   const user = await donorFromRequest(req);
-  if (!user) return json({ error: "Iniciá sesión como donante" }, 401);
+  if (!user) return json({ error: "Confirmá tu email antes de editar tus datos." }, 403);
   try {
     const { name, country, province, locality } = await req.json();
     if (!String(name || "").trim() || !String(country || "").trim() || !String(province || "").trim() || !String(locality || "").trim()) return json({ error: "Completá nombre, país, provincia y localidad." }, 400);

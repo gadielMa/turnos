@@ -5,14 +5,17 @@ async function donorFromRequest(req: Request) {
   const token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!token) return null;
   const { data, error } = await adminClient().auth.getUser(token);
-  if (error || !data.user?.user_metadata?.soypobre_donor_name) return null;
+  const metadata = data.user?.user_metadata || {};
+  const complete = ["soypobre_donor_name", "soypobre_donor_country", "soypobre_donor_province", "soypobre_donor_locality"]
+    .every((field) => typeof metadata[field] === "string" && metadata[field].trim().length > 0);
+  if (error || !data.user?.email_confirmed_at || !complete) return null;
   return data.user;
 }
 
 Deno.serve(async (req) => {
   const options = handleOptions(req);
   if (options) return options;
-  if (!await donorFromRequest(req)) return json({ error: "Iniciá sesión como donante" }, 401);
+  if (!await donorFromRequest(req)) return json({ error: "Confirmá tu email y completá todos los datos de donante." }, 403);
 
   try {
     const url = new URL(req.url);
