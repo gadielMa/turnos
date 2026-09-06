@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
     const supabase = adminClient();
     let query = supabase
       .from("soypobre_requests")
-      .select("id, name, alias, cbu, story, photo_path, photo_url, country, province, locality, created_at")
+      .select("id, name, alias, cbu, story, photo_path, photo_url, photo_status, country, province, locality, created_at")
       .eq("country", country)
       .order("created_at", { ascending: false })
       .limit(60);
@@ -31,12 +31,13 @@ Deno.serve(async (req) => {
     const { data, error } = await query;
     if (error) throw error;
     const profiles = await Promise.all((data || []).map(async (profile) => {
-      let photoUrl = profile.photo_url;
-      if (!photoUrl && profile.photo_path) {
+      // La imagen sólo se expone después de una aprobación manual.
+      let photoUrl = profile.photo_status === "approved" ? profile.photo_url : null;
+      if (profile.photo_status === "approved" && !photoUrl && profile.photo_path) {
         const signed = await supabase.storage.from("soypobre-images").createSignedUrl(profile.photo_path, 3600);
         photoUrl = signed.data?.signedUrl || null;
       }
-      return { ...profile, photo_url: photoUrl, cbu: profile.cbu || null, alias: profile.alias || null };
+      return { ...profile, photo_path: null, photo_url: photoUrl, cbu: profile.cbu || null, alias: profile.alias || null };
     }));
     return json({ profiles });
   } catch (error) {
